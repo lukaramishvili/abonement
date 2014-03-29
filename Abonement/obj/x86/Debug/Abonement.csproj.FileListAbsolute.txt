@@ -1,0 +1,9 @@
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\bin\Debug\Abonement.exe
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\bin\Debug\Abonement.pdb
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\obj\x86\Debug\ResolveAssemblyReference.cache
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\obj\x86\Debug\Abonement.Main.resources
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\obj\x86\Debug\Abonement.Properties.Resources.resources
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\obj\x86\Debug\GenerateResource.read.1.tlog
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\obj\x86\Debug\GenerateResource.write.1.tlog
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\obj\x86\Debug\Abonement.exe
+c:\users\luka\documents\visual studio 2010\Projects\Abonement\Abonement\obj\x86\Debug\Abonement.pdb
