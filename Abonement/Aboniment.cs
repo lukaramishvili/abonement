@@ -5,20 +5,21 @@ using System.Text;
 
 namespace ManagementSystem
 {
-    public class Aboniment
+    [Serializable]
+    public class Abonement
     {
-        public int id;
-        public int idPerson;
-        public DateTime start;
-        public DateTime end;
+        public int id = 0;
+        public int idPerson = 0;
+        public DateTime start = DateTime.Now;
+        public DateTime end = DateTime.Now;
 
-        public List<Attendance> attendance;
+        public List<Attendance> attendance = new List<Attendance>();
 
-        public Aboniment()
+        public Abonement()
         {
         }
    
-        public Aboniment(int id, int idPerson, DateTime start, DateTime end,
+        public Abonement(int id, int idPerson, DateTime start, DateTime end,
                 List<Attendance> attendance)
         {
             this.id = id;

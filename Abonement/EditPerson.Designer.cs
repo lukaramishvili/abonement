@@ -30,7 +30,7 @@
         {
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.aboniments_lv = new System.Windows.Forms.ListView();
+            this.abonements_lv = new System.Windows.Forms.ListView();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,21 +44,21 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.aboniments_lv);
+            this.panel1.Controls.Add(this.abonements_lv);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 25);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(584, 268);
             this.panel1.TabIndex = 1;
             // 
-            // aboniments_lv
+            // abonements_lv
             // 
-            this.aboniments_lv.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.aboniments_lv.Location = new System.Drawing.Point(0, 0);
-            this.aboniments_lv.Name = "aboniments_lv";
-            this.aboniments_lv.Size = new System.Drawing.Size(584, 268);
-            this.aboniments_lv.TabIndex = 0;
-            this.aboniments_lv.UseCompatibleStateImageBehavior = false;
+            this.abonements_lv.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.abonements_lv.Location = new System.Drawing.Point(0, 0);
+            this.abonements_lv.Name = "abonements_lv";
+            this.abonements_lv.Size = new System.Drawing.Size(584, 268);
+            this.abonements_lv.TabIndex = 0;
+            this.abonements_lv.UseCompatibleStateImageBehavior = false;
             // 
             // PersonDetails
             // 
@@ -79,6 +79,6 @@
 
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ListView aboniments_lv;
+        private System.Windows.Forms.ListView abonements_lv;
     }
 }

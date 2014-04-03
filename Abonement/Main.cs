@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections;
+using System.IO;
 
 namespace ManagementSystem
 {
@@ -35,7 +36,7 @@ namespace ManagementSystem
 
         public static string getColumnValue(ListViewItem lvi, string tag)
         {
-            var ret = "";
+            string ret = "";
             foreach (ColumnHeader ch in lvi.ListView.Columns)
             {
                 if (tag == ch.Tag.ToString())
@@ -49,7 +50,7 @@ namespace ManagementSystem
         public void displayPersons(List<Person> persons)
         {
             attendances_lv.Items.Clear();
-            aboniments_lv.Items.Clear();
+            abonements_lv.Items.Clear();
             persons_lv.Items.Clear();
             for (int ip = 0; ip < persons.Count; ip++)
             {
@@ -58,14 +59,14 @@ namespace ManagementSystem
             }
         }
 
-        public void displayAboniments(List<Aboniment> aboniments)
+        public void displayAbonements(List<Abonement> abonements)
         {
             attendances_lv.Items.Clear();
-            aboniments_lv.Items.Clear();
-            for (int iab = 0; iab < aboniments.Count; iab++)
+            abonements_lv.Items.Clear();
+            for (int iab = 0; iab < abonements.Count; iab++)
             {
-                Aboniment ab = aboniments[iab];
-                aboniments_lv.Items.Add(lviForInstance(ab, aboniments_lv));
+                Abonement ab = abonements[iab];
+                abonements_lv.Items.Add(lviForInstance(ab, abonements_lv));
             }
         }
 
@@ -81,7 +82,7 @@ namespace ManagementSystem
 
         private int getSelectedPersonId()
         {
-            var ret = -1;
+            int ret = -1;
             if (persons_lv.SelectedItems.Count > 0)
             {
                 ret = Int32.Parse(getColumnValue(persons_lv.SelectedItems[0], "id"));
@@ -91,22 +92,71 @@ namespace ManagementSystem
 
         private int getSelectedAbonementId()
         {
-            var ret = -1;
-            if (aboniments_lv.SelectedItems.Count > 0)
+            int ret = -1;
+            if (abonements_lv.SelectedItems.Count > 0)
             {
-                ret = Int32.Parse(getColumnValue(aboniments_lv.SelectedItems[0], "id"));
+                ret = Int32.Parse(getColumnValue(abonements_lv.SelectedItems[0], "id"));
             }
             return ret;
         }
 
         private int getSelectedAttendanceId()
         {
-            var ret = -1;
+            int ret = -1;
             if (attendances_lv.SelectedItems.Count > 0)
             {
                 ret = Int32.Parse(getColumnValue(attendances_lv.SelectedItems[0], "id"));
             }
             return ret;
+        }
+
+        private int getNextPersonId()
+        {
+            var queryMax = (from p in data select p.id);
+            int maxId = queryMax.Count() > 0 ? queryMax.Max() : 0;
+            int nextId = -1;
+            //the id should increment until reaching 777, then fill the freed holes from deleted persons ids
+            if (maxId >= 777) {
+                for (int i = 1; i <= 777; i++)
+                {
+                    if ((from p in data where p.id == i select p).Count() == 0)
+                    {
+                        nextId = i;
+                        break;
+                    }
+                }
+            }
+            else { nextId = maxId + 1; }
+            return nextId;
+        }
+
+        private int getNextAbonementId()
+        {
+            int maxId = 1;
+            foreach (Person p in data)
+            {
+                foreach (Abonement ab in p.abonements)
+                {
+                    maxId = Math.Max(maxId, ab.id);
+                }
+            }
+            return maxId + 1;
+        }
+
+        private int getNextAttendanceId()
+        {
+            int maxId = 1;
+            foreach (Person p in data)
+            {
+                foreach (Abonement ab in p.abonements)
+                {
+                    foreach (Attendance att in ab.attendance)
+                    {
+                        maxId = Math.Max(maxId, att.id);
+                    }
+                }
+            }
+            return maxId + 1;
         }
 
         private Person getPersonById(int id)
@@ -119,12 +169,12 @@ namespace ManagementSystem
             return ret;
         }
 
-        private Aboniment getAbonimentById(int id)
+        private Abonement getAbonementById(int id)
         {
-            Aboniment ret = null;
+            Abonement ret = null;
             foreach (Person p in data)
             {
-                foreach (Aboniment ab in p.aboniments)
+                foreach (Abonement ab in p.abonements)
                 {
                     if (ab.id == id) { ret = ab; }
                 }
@@ -137,7 +187,7 @@ namespace ManagementSystem
             Attendance ret = null;
             foreach (Person p in data)
             {
-                foreach (Aboniment ab in p.aboniments)
+                foreach (Abonement ab in p.abonements)
                 {
                     foreach (Attendance att in ab.attendance)
                     {
@@ -159,50 +209,50 @@ namespace ManagementSystem
             return ret;
         }
 
-        private Tuple<int, int> getAbonimentIndexById(int id)
+        private Tuple<int, int> getAbonementIndexById(int id)
         {
             int retPersonIndex = -1;
-            int retAbonimentIndex = -1;
+            int retAbonementIndex = -1;
             for (int ip = 0; ip < data.Count; ip++)
             {
                 Person p = data[ip];
-                for (int iab = 0; iab < p.aboniments.Count; iab++)
+                for (int iab = 0; iab < p.abonements.Count; iab++)
                 {
-                    Aboniment ab = p.aboniments[iab];
+                    Abonement ab = p.abonements[iab];
                     if (ab.id == id)
                     {
                         retPersonIndex = ip;
-                        retAbonimentIndex = iab;
+                        retAbonementIndex = iab;
                     }
                 }
             }
-            return new Tuple<int,int>(retPersonIndex, retAbonimentIndex);
+            return new Tuple<int,int>(retPersonIndex, retAbonementIndex);
         }
 
         private Tuple<int,int,int> getAttendanceIndexById(int id)
         {
             int retPersonIndex = -1;
-            int retAbonimentIndex = -1;
+            int retAbonementIndex = -1;
             int retAttendanceIndex = -1;
             for (int ip = 0; ip < data.Count; ip++)
             {
                 Person p = data[ip];
-                for (int iab = 0; iab < p.aboniments.Count; iab++)
+                for (int iab = 0; iab < p.abonements.Count; iab++)
                 {
-                    Aboniment ab = p.aboniments[iab];
+                    Abonement ab = p.abonements[iab];
                     for (int iatt = 0; iatt < ab.attendance.Count; iatt++)
                     {
                         Attendance att = ab.attendance[iatt];
                         if (att.id == id)
                         {
                             retPersonIndex = ip;
-                            retAbonimentIndex = iab;
+                            retAbonementIndex = iab;
                             retAttendanceIndex = iatt;
                         }
                     }
                 }
             }
-            return new Tuple<int, int, int>(retPersonIndex, retAbonimentIndex, retAttendanceIndex);
+            return new Tuple<int, int, int>(retPersonIndex, retAbonementIndex, retAttendanceIndex);
         }
 
         //displays edit form for a class instance. the class should have a parameterless constructor or it won't work
@@ -233,7 +283,7 @@ namespace ManagementSystem
                 {
                     case "id":
                     case "idPerson":
-                    case "idAboniment":
+                    case "idAbonement":
                         yInc = 0;//these controls are hidden, so don't reserve any vertical space for them
                         NumericUpDown numId = new NumericUpDown();
                         numId.DecimalPlaces = 0;
@@ -257,6 +307,11 @@ namespace ManagementSystem
                                 lblDef.Top = boolEd.Top = yPos;
                                 boolEd.Left = xPos + lblDef.Width + 10;
                                 assoc[fi.Name] = boolEd;
+                                //don't allow a moderator to change attended status
+                                if (fi.Name == "attended" && loginStatus != "administrator")
+                                {
+                                    boolEd.Enabled = false;
+                                }
                                 editForm.Controls.Add(lblDef);
                                 editForm.Controls.Add(boolEd);
                                 break;
@@ -307,10 +362,12 @@ namespace ManagementSystem
                 yPos += yInc;
             }
             Button btnSave = new Button();
+            btnSave.Width = 120;
             btnSave.Left = xPos;
             btnSave.Top = yPos;
             btnSave.Text = "დამახსოვრება";
             editForm.Controls.Add(btnSave);
+            editForm.AcceptButton = btnSave;
             btnSave.Click += new EventHandler(delegate
             {
                 //reuse the passed parameter which we're editing; this is necessary to retain any noneditable fields/members
@@ -364,67 +421,114 @@ namespace ManagementSystem
         }
 
         public static List<Person> data = new List<Person>();
+        public string loginStatus = "none";
 
         private void Main_Load(object sender, EventArgs e)
         {
-            //TODO: real data
-            data.Add(new Person(0, "0101", "Luka", 23, "Shanidze", "577", 15.0m,
-                new [] {
-                    new Aboniment(0, 9, DateTime.Now, DateTime.Now,
+            Form frmLogin = new Form(); frmLogin.Text = "შესვლა";
+            Label lblUsername = new Label(); lblUsername.Text = "მომხმარებელი"; lblUsername.Left = 10; lblUsername.Top = 10;
+            TextBox txtUsername = new TextBox(); txtUsername.Left = 10; txtUsername.Top = 40;
+            Label lblPassword = new Label(); lblPassword.Text = "პაროლი"; lblPassword.Left = 10; lblPassword.Top = 70;
+            TextBox txtPassword = new TextBox(); txtPassword.PasswordChar = '*'; txtPassword.Left = 10; txtPassword.Top = 100;
+            Button btnLogin = new Button(); btnLogin.Text = "შესვლა"; btnLogin.Left = 10; btnLogin.Top = 130;
+            frmLogin.Controls.AddRange(new Control[] { lblUsername, txtUsername, lblPassword, txtPassword, btnLogin });
+            frmLogin.AcceptButton = btnLogin;
+            bool fClickedDontTryAgain = false;//otherwise, FormClosing gets called twice
+            btnLogin.Click += new EventHandler(delegate
+            {
+                if (txtUsername.Text == "admin" && txtPassword.Text == "123") { loginStatus = "administrator"; }
+                else if (txtUsername.Text == "moderator" && txtPassword.Text == "123") { loginStatus = "moderator"; }
+                else { MessageBox.Show("მომხმარებლის სახელი ან პაროლი არასწორია"); }
+                if (loginStatus != "none") {
+                    labelLoginStatus.Text = "თქვენ შემოსული ხართ, როგორც " + loginStatus;
+                    fClickedDontTryAgain = true; frmLogin.Close();
+                }
+            });
+            frmLogin.FormClosing += new FormClosingEventHandler(delegate (object senderLogin, FormClosingEventArgs eLogin)
+            {
+                if (!fClickedDontTryAgain)
+                {
+                    if (DialogResult.Yes == MessageBox.Show("გსურთ პროგრამიდან გამოსვლა?", "დადასტურება", MessageBoxButtons.YesNo))
+                    {
+                        fClickedDontTryAgain = true;
+                        Application.Exit();
+                    }
+                    else { eLogin.Cancel = true; }
+                }
+            });
+            frmLogin.ShowDialog();
+
+            if (LoadData())
+            {
+                //make backup of previous data with save data, and start with fresh
+                SaveData();
+                this.displayPersons(data);//moved to here instead of after if
+            }
+            else
+            {
+                /*
+                //test data
+                data.Add(new Person(1, "0101", "სატესტო", 32, "ინფორმაცია", "599", 15.0m,
+                    new[] {
+                    new Abonement(1, 9, DateTime.Now, DateTime.Now,
                                 new [] {
                                     new Attendance(0, 0, 0, DateTime.Now, true)
                                 }.ToList<Attendance>()) 
-                }.ToList<Aboniment>()
-                                ));
-            //iadab, idatt: autoincrement-like mechanism for other classes (no aboniment should have the same id)
-            //so, actually, for now person.id == its index in 'data array, but aboniments and attendances ids differ from their indexes
-            for (int ip = 0, idab = 0, idatt = 0; ip < data.Count; ip++)
-            {
-                Person p = data[ip];
-                /*use array indexes as id-s and set the id fields accordingly*/
-                p.id = ip;
-                for (int iab = 0; iab < p.aboniments.Count; iab++)
+                }.ToList<Abonement>()
+                                    ));
+                //iadab, idatt: autoincrement-like mechanism for other classes (no abonement should have the same id)
+                //indexes != id-s !!!
+                for (int ip = 0, idab = 0, idatt = 0; ip < data.Count; ip++)
                 {
-                    Aboniment ab = p.aboniments[iab];
-                    ab.id = idab++;
-                    ab.idPerson = p.id;
-                    for (int iatt = 0; iatt < ab.attendance.Count; iatt++)
+                    Person p = data[ip];
+                    for (int iab = 0; iab < p.abonements.Count; iab++)
                     {
-                        Attendance att = ab.attendance[iatt];
-                        att.id = idatt++;
-                        att.idPerson = p.id;
-                        att.idAboniment = iab;
+                        Abonement ab = p.abonements[iab];
+                        ab.id = idab++;
+                        ab.idPerson = p.id;
+                        for (int iatt = 0; iatt < ab.attendance.Count; iatt++)
+                        {
+                            Attendance att = ab.attendance[iatt];
+                            att.id = idatt++;
+                            att.idPerson = p.id;
+                            att.idAbonement = iab;
+                        }
                     }
                 }
+                 */
             }
-            this.displayPersons(data);
         }
 
         private void persons_lv_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (persons_lv.SelectedItems.Count > 0)
             {
-                //display aboniments when a person is selected
-                Person p = data[this.getSelectedPersonId()];
-                if (p.aboniments != null)
+                //display abonements when a person is selected
+                Person p = data[getPersonIndexById(this.getSelectedPersonId())];
+                if (p.abonements != null)
                 {
-                    displayAboniments(p.aboniments);
+                    displayAbonements(p.abonements);
                 }
             }
+            else { displayAbonements(new List<Abonement>()); }
         }
 
-        private void aboniments_lv_SelectedIndexChanged(object sender, EventArgs e)
+        private void abonements_lv_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (aboniments_lv.SelectedItems.Count > 0)
+            if (abonements_lv.SelectedItems.Count > 0)
             {
-                //display attendances when an aboniment is selected
+                btnAddAttendance.Enabled = true;
+                //display attendances when an abonement is selected
                 int id = getSelectedAbonementId();
-                Aboniment[] ab = (from fab in data[Int32.Parse(getColumnValue(persons_lv.SelectedItems[0], "id"))].aboniments
-                               where fab.id == id
-                               select fab).ToArray();
-                //TODO: is the length check necessary? if the list is empty, then call displayAttendances to clear the displayed list
-                if (true || ab.Length > 0) { displayAttendances(ab[0].attendance); }
+                int idPerson = Int32.Parse(getColumnValue(persons_lv.SelectedItems[0], "id"));
+                int indexPerson = getPersonIndexById(idPerson);
+                Abonement[] ab = (from fab in data[indexPerson].abonements
+                                  where fab.id == id
+                                  select fab).ToArray();
+                //if the list is empty, then call displayAttendances anyway to clear the displayed list
+                displayAttendances(ab[0].attendance);
             }
+            else { btnAddAttendance.Enabled = false; }
         }
 
         private void menuItemAttended_Click(object sender, EventArgs e)
@@ -440,6 +544,7 @@ namespace ManagementSystem
             if (attendances_lv.SelectedItems.Count > 0)
             {
                 int id = getSelectedAttendanceId();
+                //TODO:what?
             }
         }
 
@@ -448,33 +553,35 @@ namespace ManagementSystem
             int id = getSelectedPersonId();
             if (id > -1)
             {
-                displayEditForm(data[id], delegate(Object o) {
+                int indexPerson = getPersonIndexById(id);
+                displayEditForm(data[indexPerson], delegate(Object o)
+                {
                     Person p = (Person)o;
                     //update the value in "database"
-                    data[id] = p;
+                    data[indexPerson] = p;
                     displayPersons(data);
                 });
             }
         }
 
-        private void aboniments_lv_DoubleClick(object sender, EventArgs e)
+        private void abonements_lv_DoubleClick(object sender, EventArgs e)
         {
             int id = getSelectedAbonementId();
             if (id > -1)
             {
-                Aboniment abToEdit = getAbonimentById(id);
+                Abonement abToEdit = getAbonementById(id);
                 if (abToEdit != null)
                 {
                     displayEditForm(abToEdit, delegate(Object o)
                     {
-                        Aboniment ab = (Aboniment)o;
+                        Abonement ab = (Abonement)o;
                         //update the value in database
-                        Tuple<int,int> path = getAbonimentIndexById(ab.id);
+                        Tuple<int,int> path = getAbonementIndexById(ab.id);
                         if (path.Item1 != -1 && path.Item2 != -1)
                         {
-                            data[path.Item1].aboniments[path.Item2] = ab;
+                            data[path.Item1].abonements[path.Item2] = ab;
                         }
-                        displayAboniments(getPersonById(ab.idPerson).aboniments);
+                        displayAbonements(getPersonById(ab.idPerson).abonements);
                     });
                 }
             }
@@ -495,12 +602,193 @@ namespace ManagementSystem
                         Tuple<int, int, int> path = getAttendanceIndexById(att.id);
                         if (path.Item1 != -1 && path.Item2 != -1 && path.Item3 != -1)
                         {
-                            data[path.Item1].aboniments[path.Item2].attendance[path.Item3] = att;
+                            data[path.Item1].abonements[path.Item2].attendance[path.Item3] = att;
                         }
-                        displayAttendances(getAbonimentById(att.idAboniment).attendance);
+                        displayAttendances(getAbonementById(att.idAbonement).attendance);
                     });
                 }
             }
+        }
+
+        private void btnShowAllPersons_Click(object sender, EventArgs e)
+        {
+            displayPersons(data);
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            clearSearchFields();
+            displayPersons(data);
+        }
+
+        private void DoTextSearch()
+        {
+            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(txtSearch.Text);
+            var filtered = (from p in data
+                               where reg.IsMatch(p.name) || reg.IsMatch(p.address) || reg.IsMatch(p.phone)
+                               select p).ToList<Person>();
+            displayPersons(filtered);
+        }
+
+        private void clearSearchFields()
+        {
+            //clear search fields
+            txtSearch.Text = "";
+            //other filters are date/time pickers, so there's no sense clearing them
+        }
+
+        private void btnAddAbonement_Click(object sender, EventArgs e)
+        {
+            if (persons_lv.SelectedIndices.Count > 0)
+            {
+                int idPerson = getSelectedPersonId();
+                int indexPerson = getPersonIndexById(idPerson);
+                Abonement abToEdit = new Abonement();
+                abToEdit.idPerson = idPerson;
+                //this code runs only when adding an abonement
+                displayEditForm(abToEdit, delegate(object o)
+                {
+                    Abonement ab = (Abonement)o;
+                    ab.id = getNextAbonementId();
+                    data[indexPerson].abonements.Add(ab);
+                    displayAbonements(data[indexPerson].abonements);
+                });
+            }
+            else { MessageBox.Show("გთხოვთ მონიშნოთ პიროვნება."); }
+        }
+
+        private void btnAddPerson_Click(object sender, EventArgs e)
+        {
+            Person pToEdit = new Person();
+            //this code runs only when adding a person
+            displayEditForm(pToEdit, delegate(object o)
+            {
+                Person p = (Person)o;
+                p.id = getNextPersonId();
+                if (p.id == -1) { MessageBox.Show("პიროვნება ვერ დაემატება, მიღწეულია 777 ლიმიტი."); return; }
+                data.Add(p);
+                displayPersons(data);
+            });
+        }
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!SaveData())
+            {
+                if (DialogResult.Yes == MessageBox.Show("მონაცემების დამახსოვრება ვერ მოხერხდა! მაინც გსურთ გამოსვლა?", "შეცდომა",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Error))
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private string getHomePath()
+        {
+            return (Environment.OSVersion.Platform == PlatformID.Unix ||
+                Environment.OSVersion.Platform == PlatformID.MacOSX)
+                ? Environment.GetEnvironmentVariable("HOME")
+                : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+        }
+
+        /// <summary>
+        /// Saves data to ~/Abonement
+        /// </summary>
+        /// <returns>Success flag</returns>
+        private bool SaveData()
+        {
+            string homeDir = getHomePath();
+            string saveDir = homeDir + "/Abonement";
+            string backupsDir = saveDir + "/backups";
+            string saveFile = saveDir + "/data.dat";
+            if (!Directory.Exists(saveDir)) { Directory.CreateDirectory(saveDir); }
+            if (!Directory.Exists(backupsDir)) { Directory.CreateDirectory(backupsDir); }
+            //backup ~/Abonement/data.dat in ~/Abonement/backups/data00MAX+1.bak
+            int nextBakId = 0;
+            while (0 < ++nextBakId && File.Exists(backupsDir + "/data" + nextBakId.ToString("D3") + ".bak")) ;
+            if (File.Exists(saveFile)) { File.Copy(saveFile, backupsDir + "/data" + nextBakId.ToString("D3") + ".bak"); }
+            //serialize "data" variable and save
+            System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            Stream stream = new FileStream(saveFile, FileMode.Create, FileAccess.Write, FileShare.None);
+            formatter.Serialize(stream, ManagementSystem.Main.data);
+            stream.Close();
+            return true;
+        }
+
+        private bool LoadData()
+        {
+            //load data from ~/Abonement/data.dat
+            string homeDir = getHomePath();
+            string saveDir = homeDir + "/Abonement";
+            string backupsDir = saveDir + "/backups";
+            string saveFile = saveDir + "/data.dat";
+            if (File.Exists(saveFile))
+            {
+                System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                Stream stream = new FileStream(saveFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+                ManagementSystem.Main.data = (List<Person>)formatter.Deserialize(stream);
+                stream.Close();
+                return true;
+            }
+            else { return false; }
+        }
+
+        private void btnSaveAllData_Click(object sender, EventArgs e)
+        {
+            if (!SaveData())
+            {
+                MessageBox.Show("მონაცემების დამახსოვრება ვერ მოხერხდა");
+            }
+        }
+
+        private void btnAddAttendance_Click(object sender, EventArgs e)
+        {
+            if (persons_lv.SelectedIndices.Count > 0)
+            {
+                int idPerson = getSelectedPersonId();
+                int indexPerson = getPersonIndexById(idPerson);
+                if (abonements_lv.SelectedIndices.Count > 0)
+                {
+                    int idAbonement = getSelectedAbonementId();
+                    int indexAbonement = getPersonIndexById(idPerson);
+                    Attendance attToEdit = new Attendance();
+                    attToEdit.idPerson = idPerson;
+                    attToEdit.idAbonement = idAbonement;
+                    //this code runs only when adding an abonement
+                    displayEditForm(attToEdit, delegate(object o)
+                    {
+                        Attendance att = (Attendance)o;
+                        att.id = getNextAttendanceId();
+                        data[indexPerson].abonements[indexAbonement].attendance.Add(att);
+                        displayAttendances(data[indexPerson].abonements[indexAbonement].attendance);
+                    });
+                }
+                else { /*it can't reach here, on abonement deselect this btn gets disabled*/ }
+            }
+            else { MessageBox.Show("გთხოვთ მონიშნოთ პიროვნება."); }
+        }
+
+        private void btnTextSearch_Click(object sender, EventArgs e)
+        {
+            DoTextSearch();
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = "";
+        }
+
+        private void btnTodayStats_Click(object sender, EventArgs e)
+        {
+            var hour = stat_today_hour.Value.Hour;
+            var filtered = (from p in data
+                            where (from ab in p.abonements
+                                   where (from att in ab.attendance
+                                              where att.time == hour
+                                              select att).Count() > 0
+                                   select ab).Count() > 0
+                            select p).ToList<Person>();
+            displayPersons(filtered);
         }
 
 
