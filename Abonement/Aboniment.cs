@@ -13,6 +13,23 @@ namespace ManagementSystem
         public DateTime start = DateTime.Now;
         public DateTime end = DateTime.Now;
 
+        public decimal price = 0.0m;
+
+        public bool mon = false;
+        public int monHour = 0;
+        public bool tue = false;
+        public int tueHour = 0;
+        public bool wed = false;
+        public int wedHour = 0;
+        public bool thu = false;
+        public int thuHour = 0;
+        public bool fri = false;
+        public int friHour = 0;
+        public bool sat = false;
+        public int satHour = 0;
+        public bool sun = false;
+        public int sunHour = 0;
+
         public List<Attendance> attendance = new List<Attendance>();
 
         public Abonement()

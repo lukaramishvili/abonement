@@ -59,5 +59,26 @@ namespace ManagementSystem.Properties {
                 resourceCulture = value;
             }
         }
+        
+        internal static System.Drawing.Bitmap Check_Green {
+            get {
+                object obj = ResourceManager.GetObject("Check_Green", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Check_Yellow {
+            get {
+                object obj = ResourceManager.GetObject("Check_Yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap X_Red {
+            get {
+                object obj = ResourceManager.GetObject("X_Red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

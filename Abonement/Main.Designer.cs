@@ -34,6 +34,7 @@
             this.btnAddPerson = new System.Windows.Forms.ToolStripButton();
             this.btnAddAbonement = new System.Windows.Forms.ToolStripButton();
             this.btnSaveAllData = new System.Windows.Forms.ToolStripButton();
+            this.btnTextSearch = new System.Windows.Forms.ToolStripButton();
             this.txtSearch = new System.Windows.Forms.ToolStripTextBox();
             this.main_hsplit = new System.Windows.Forms.SplitContainer();
             this.persons_lv = new System.Windows.Forms.ListView();
@@ -78,7 +79,7 @@
             this.menuItemAttended = new System.Windows.Forms.ToolStripMenuItem();
             this.mainStatus = new System.Windows.Forms.StatusStrip();
             this.labelLoginStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnTextSearch = new System.Windows.Forms.ToolStripButton();
+            this.btnRemovePerson = new System.Windows.Forms.ToolStripButton();
             this.mainToolbar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.main_hsplit)).BeginInit();
             this.main_hsplit.Panel1.SuspendLayout();
@@ -99,6 +100,7 @@
             // 
             this.mainToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnAddPerson,
+            this.btnRemovePerson,
             this.btnAddAbonement,
             this.btnSaveAllData,
             this.btnTextSearch,
@@ -139,6 +141,17 @@
             this.btnSaveAllData.Size = new System.Drawing.Size(106, 20);
             this.btnSaveAllData.Text = "მონაცემების შენახვა";
             this.btnSaveAllData.Click += new System.EventHandler(this.btnSaveAllData_Click);
+            // 
+            // btnTextSearch
+            // 
+            this.btnTextSearch.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btnTextSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnTextSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnTextSearch.Image")));
+            this.btnTextSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnTextSearch.Name = "btnTextSearch";
+            this.btnTextSearch.Size = new System.Drawing.Size(36, 20);
+            this.btnTextSearch.Text = "ძიება";
+            this.btnTextSearch.Click += new System.EventHandler(this.btnTextSearch_Click);
             // 
             // txtSearch
             // 
@@ -247,9 +260,9 @@
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.groupBox2.Location = new System.Drawing.Point(544, 0);
+            this.groupBox2.Location = new System.Drawing.Point(504, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(462, 100);
+            this.groupBox2.Size = new System.Drawing.Size(502, 100);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "დღის სტატისტიკა";
@@ -327,14 +340,14 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Left;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(399, 100);
+            this.groupBox1.Size = new System.Drawing.Size(463, 100);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "სტატისტიკა";
             // 
             // btnAllTimeStats
             // 
-            this.btnAllTimeStats.Location = new System.Drawing.Point(274, 50);
+            this.btnAllTimeStats.Location = new System.Drawing.Point(295, 52);
             this.btnAllTimeStats.Name = "btnAllTimeStats";
             this.btnAllTimeStats.Size = new System.Drawing.Size(75, 23);
             this.btnAllTimeStats.TabIndex = 7;
@@ -345,7 +358,7 @@
             // 
             this.stat_anyday_end.CustomFormat = "HH:00 სთ";
             this.stat_anyday_end.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.stat_anyday_end.Location = new System.Drawing.Point(149, 52);
+            this.stat_anyday_end.Location = new System.Drawing.Point(170, 54);
             this.stat_anyday_end.Name = "stat_anyday_end";
             this.stat_anyday_end.ShowUpDown = true;
             this.stat_anyday_end.Size = new System.Drawing.Size(80, 20);
@@ -355,7 +368,7 @@
             // 
             this.stat_anyday_start.CustomFormat = "HH:00 სთ";
             this.stat_anyday_start.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.stat_anyday_start.Location = new System.Drawing.Point(16, 52);
+            this.stat_anyday_start.Location = new System.Drawing.Point(37, 54);
             this.stat_anyday_start.Name = "stat_anyday_start";
             this.stat_anyday_start.ShowUpDown = true;
             this.stat_anyday_start.Size = new System.Drawing.Size(80, 20);
@@ -363,7 +376,7 @@
             // 
             // stat_anyday_date
             // 
-            this.stat_anyday_date.Location = new System.Drawing.Point(149, 19);
+            this.stat_anyday_date.Location = new System.Drawing.Point(170, 21);
             this.stat_anyday_date.Name = "stat_anyday_date";
             this.stat_anyday_date.Size = new System.Drawing.Size(200, 20);
             this.stat_anyday_date.TabIndex = 4;
@@ -371,7 +384,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(235, 55);
+            this.label6.Location = new System.Drawing.Point(256, 57);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(27, 13);
             this.label6.TabIndex = 3;
@@ -380,7 +393,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(98, 55);
+            this.label5.Location = new System.Drawing.Point(119, 57);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(28, 13);
             this.label5.TabIndex = 2;
@@ -389,7 +402,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(355, 22);
+            this.label4.Location = new System.Drawing.Point(376, 24);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(15, 13);
             this.label4.TabIndex = 1;
@@ -398,7 +411,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 20);
+            this.label3.Location = new System.Drawing.Point(34, 22);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(130, 13);
             this.label3.TabIndex = 0;
@@ -557,16 +570,15 @@
             this.labelLoginStatus.Name = "labelLoginStatus";
             this.labelLoginStatus.Size = new System.Drawing.Size(0, 17);
             // 
-            // btnTextSearch
+            // btnRemovePerson
             // 
-            this.btnTextSearch.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btnTextSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnTextSearch.Image = ((System.Drawing.Image)(resources.GetObject("btnTextSearch.Image")));
-            this.btnTextSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnTextSearch.Name = "btnTextSearch";
-            this.btnTextSearch.Size = new System.Drawing.Size(36, 20);
-            this.btnTextSearch.Text = "ძიება";
-            this.btnTextSearch.Click += new System.EventHandler(this.btnTextSearch_Click);
+            this.btnRemovePerson.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnRemovePerson.Image = ((System.Drawing.Image)(resources.GetObject("btnRemovePerson.Image")));
+            this.btnRemovePerson.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnRemovePerson.Name = "btnRemovePerson";
+            this.btnRemovePerson.Size = new System.Drawing.Size(100, 20);
+            this.btnRemovePerson.Text = "პიროვნების წაშლა";
+            this.btnRemovePerson.Click += new System.EventHandler(this.btnRemovePerson_Click);
             // 
             // Main
             // 
@@ -657,6 +669,7 @@
         private System.Windows.Forms.ColumnHeader balance;
         private System.Windows.Forms.Button btnAddAttendance;
         private System.Windows.Forms.ToolStripButton btnTextSearch;
+        private System.Windows.Forms.ToolStripButton btnRemovePerson;
 
     }
 }

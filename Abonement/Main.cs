@@ -18,6 +18,47 @@ namespace ManagementSystem
             InitializeComponent();
         }
 
+        private Hashtable translation = new Hashtable();
+
+        private void populateTranslation()
+        {
+            translation["ident"] = "პირადი ნომერი";
+            translation["name"] = "სახელი და გვარი";
+            translation["phone"] = "ტელ. ნომერი";
+            translation["age"] = "ასაკი";
+            translation["address"] = "მისამართი";
+            translation["balance"] = "გადახდილია";
+            translation["start"] = "პირადი ნომერი";
+            translation["end"] = "პირადი ნომერი";
+            translation["day"] = "პირადი ნომერი";
+            translation["mon"] = "ორშ.";
+            translation["tue"] = "სამშ.";
+            translation["wed"] = "ოთხშ.";
+            translation["thu"] = "ხუთ.";
+            translation["fri"] = "პარ.";
+            translation["sat"] = "შაბ.";
+            translation["sun"] = "კვ.";
+            translation["monHour"] = "ორშ. მოსვლა";
+            translation["tueHour"] = "სამშ. მოსვლა";
+            translation["wedHour"] = "ოთხშ. მოსვლა";
+            translation["thuHour"] = "ხუთ. მოსვლა";
+            translation["friHour"] = "პარ. მოსვლა";
+            translation["satHour"] = "შაბ. მოსვლა";
+            translation["sunHour"] = "კვ. მოსვლა";
+            translation["price"] = "ფასი";
+        }
+
+        /// <summary>
+        /// translates a string
+        /// </summary>
+        /// <param name="what"></param>
+        /// <returns>translation</returns>
+        public string tr(string what)
+        {
+            if (translation.Count == 0) { populateTranslation(); }
+            return translation.ContainsKey(what) ? translation[what].ToString() : what;
+        }
+
         public static ListViewItem lviForInstance(Object o, ListView lv)
         {
             List<string> items = new List<string>();
@@ -33,6 +74,43 @@ namespace ManagementSystem
             ListViewItem lvi = new ListViewItem(items.ToArray());
             return lvi;
         }
+        /*
+        //this (almost finished) code attempts to display 0,1,2 attend statuses as red/yellow/green images 
+        public static ListViewItem lviForInstance(Object o, ListView lv)
+        {
+            List<ListViewItem.ListViewSubItem> items = new List<ListViewItem.ListViewSubItem>();
+            ImageList icons = new ImageList();
+            icons.Images.AddRange(new Image[]{
+                ManagementSystem.Properties.Resources.X_Red,
+                ManagementSystem.Properties.Resources.Check_Yellow,
+                ManagementSystem.Properties.Resources.Check_Green
+            });
+            lv.SmallImageList = icons;
+            ListViewItem lvi = new ListViewItem();
+            bool usesImage = false;
+            foreach (ColumnHeader ch in lv.Columns)
+            {
+                / *ch.Name doesn't work (a bug), so Tag is used for column name* /
+                System.Reflection.FieldInfo fi = o.GetType().GetField(ch.Tag.ToString());
+                if (fi != null)
+                {
+                    items.Add(new ListViewItem.ListViewSubItem(lvi, fi.GetValue(o).ToString()));
+                    if (fi.Name == "attended")
+                    {
+                        usesImage = true;
+                        //ListViewItem.ListViewSubItem lvisub = new ListViewItem.ListViewSubItem(lvi, "");
+                        lvi.ImageIndex = (int)fi.GetValue(o);
+                    }
+                    else
+                    {
+                    }
+                }
+            }
+            lvi.SubItems.AddRange(items.ToArray());
+            if (!usesImage) { lvi.SubItems.RemoveAt(0); }
+            return lvi;
+        }
+         */
 
         public static string getColumnValue(ListViewItem lvi, string tag)
         {
@@ -265,16 +343,18 @@ namespace ManagementSystem
         private void displayEditForm(Object o, Action<object> callback)
         {
             Form editForm = new Form();
+            editForm.Width = 400;
+            editForm.Height = 500;
             bool fSaved = false;//don't ask for close confirmation when this flag is set (by btnSave.Click)
             int xPos = 10;
-            int yPos = 0;
+            int yPos = 20;
             //which field name (stored label.Tag) is associated with which control
             Dictionary<string, Control> assoc = new Dictionary<string,Control>();
             foreach (System.Reflection.FieldInfo fi in o.GetType().GetFields())
             {
                 int yInc = 30;//how much vertical space does the current editor take
                 Label lblDef = new Label();
-                lblDef.Text = fi.Name;
+                lblDef.Text = tr(fi.Name);
                 lblDef.Left = xPos;
                 //field name is saved in label's Tag attribute
                 lblDef.Tag = fi.Name;
@@ -296,6 +376,75 @@ namespace ManagementSystem
                         lblDef.Visible = false;
                         editForm.Controls.Add(lblDef);
                         editForm.Controls.Add(numId);
+                        break;
+                    case "attended":
+                        yInc = 105;
+                        lblDef.Visible = false;
+                        Label lblMissed = new Label(); lblMissed.Text = "არ მოსულა"; lblMissed.ForeColor = Color.Red;
+                        RadioButton rbMissed = new RadioButton();
+                        Label lblCame = new Label(); lblCame.Text = "მოვიდა"; lblCame.ForeColor = Color.Yellow;
+                        RadioButton rbCame = new RadioButton();
+                        Label lblAttended = new Label(); lblAttended.Text = "დაესწრო"; lblAttended.ForeColor = Color.Green;
+                        RadioButton rbAttended = new RadioButton();
+                        PictureBox pbMissed = new PictureBox(); pbMissed.Image = ManagementSystem.Properties.Resources.X_Red; pbMissed.Width = 25; pbMissed.Height = 25;
+                        PictureBox pbCame = new PictureBox(); pbCame.Image = ManagementSystem.Properties.Resources.Check_Yellow; pbCame.Width = 25; pbCame.Height = 25;
+                        PictureBox pbAttended = new PictureBox(); pbAttended.Image = ManagementSystem.Properties.Resources.Check_Green; pbAttended.Width = 25; pbAttended.Height = 25;
+                        lblDef.Top = rbMissed.Top = yPos;
+                        lblMissed.Top = (rbMissed.Top = yPos) + 5;
+                        lblCame.Top = (rbCame.Top = yPos + 30) + 5;
+                        lblAttended.Top = (rbAttended.Top = yPos + 60) + 5;
+                        rbMissed.Left = xPos + 30;
+                        lblMissed.Left = rbMissed.Left + 20;
+                        rbCame.Left = xPos + 30;
+                        lblCame.Left = rbMissed.Left + 20;
+                        rbAttended.Left = xPos + 30;
+                        lblAttended.Left = rbMissed.Left + 20;
+                        pbMissed.Top = yPos;
+                        pbCame.Top = yPos + 30;
+                        pbAttended.Top = yPos + 60;
+                        pbMissed.Left = xPos;//rbMissed.Left + 20;
+                        pbCame.Left = xPos;//pbCame.Left + 20;
+                        pbAttended.Left = xPos;//pbAttended.Left + 20;
+                        lblMissed.BackColor = rbMissed.BackColor = lblCame.BackColor = rbCame.BackColor = lblAttended.BackColor = rbAttended.BackColor = Color.Transparent;
+                        assoc[fi.Name] = rbMissed;
+                        editForm.Controls.Add(lblDef); editForm.Controls.Add(lblMissed); editForm.Controls.Add(rbMissed); editForm.Controls.Add(lblCame);
+                        editForm.Controls.Add(rbCame); editForm.Controls.Add(lblAttended); editForm.Controls.Add(rbAttended);
+                        editForm.Controls.Add(pbMissed); editForm.Controls.Add(pbCame); editForm.Controls.Add(pbAttended);
+                        rbMissed.Tag = rbCame.Tag = rbAttended.Tag = fi.Name;
+                        switch ((int)fi.GetValue(o))
+                        {
+                            case 0:
+                                rbMissed.Checked = true;
+                                break;
+                            case 1:
+                                rbCame.Checked = true;
+                                break;
+                            case 2:
+                                rbAttended.Checked = true;
+                                break;
+                        }
+                        if (fi.Name == "attended" && loginStatus != "administrator")
+                        {
+                            rbMissed.Enabled = rbCame.Enabled = rbAttended.Enabled = false;
+                        }
+                        break;
+                    case "sunHour":
+                    case "monHour":
+                    case "tueHour":
+                    case "wedHour":
+                    case "thuHour":
+                    case "friHour":
+                    case "satHour":
+                        DateTimePicker hourEd = new DateTimePicker();
+                        hourEd.Format = DateTimePickerFormat.Custom;
+                        hourEd.CustomFormat = "HH:00 სთ";
+                        hourEd.ShowUpDown = true;
+                        hourEd.Value = new DateTime(2000, 1, 1, (int)fi.GetValue(o), 0, 0);
+                        lblDef.Top = hourEd.Top = yPos;
+                        hourEd.Left = xPos + lblDef.Width + 10;
+                        assoc[fi.Name] = hourEd;
+                        editForm.Controls.Add(lblDef);
+                        editForm.Controls.Add(hourEd);
                         break;
                     //if the fieldname-specific editor isn't set, then choose an editor based on the field type
                     default:
@@ -332,6 +481,11 @@ namespace ManagementSystem
                                 lblDef.Top = decEd.Top = yPos;
                                 decEd.Left = xPos + lblDef.Width + 10;
                                 assoc[fi.Name] = decEd;
+                                //don't allow a moderator to change the price
+                                if (fi.Name == "price" && loginStatus != "administrator")
+                                {
+                                    decEd.Enabled = false;
+                                }
                                 editForm.Controls.Add(lblDef);
                                 editForm.Controls.Add(decEd);
                                 break;
@@ -379,25 +533,54 @@ namespace ManagementSystem
                         System.Reflection.FieldInfo fi = o.GetType().GetField(ctrl.Tag.ToString());
                         if (fi != null)
                         {
-                            switch (fi.FieldType.ToString())
+                            switch (fi.Name)
                             {
-                                case "System.Boolean":
-                                    fi.SetValue(edited, ((CheckBox)assoc[ctrl.Tag.ToString()]).Checked);
+                                case "attended":
+                                    foreach (Control c in editForm.Controls)
+                                    {
+                                        if (c.Tag.ToString() == "attended")
+                                        {
+                                            RadioButton rbCur = (RadioButton)c;
+                                            if (rbCur.Checked)
+                                            {
+                                                fi.SetValue(edited, rbCur.Checked);
+                                                break;
+                                            }
+                                        }
+                                    }
                                     break;
-                                case "System.Int32":
-                                    fi.SetValue(edited, (int)((NumericUpDown)assoc[ctrl.Tag.ToString()]).Value);
-                                    break;
-                                case "System.Decimal":
-                                    fi.SetValue(edited, (decimal)((NumericUpDown)assoc[ctrl.Tag.ToString()]).Value);
-                                    break;
+                                case "sunHour":
+                                case "monHour":
+                                case "tueHour":
+                                case "wedHour":
+                                case "thuHour":
+                                case "friHour":
+                                case "satHour":
                                 case "System.DateTime":
-                                    fi.SetValue(edited, (DateTime)((DateTimePicker)assoc[ctrl.Tag.ToString()]).Value);
-                                    break;
-                                case "System.String":
-                                    fi.SetValue(edited, assoc[ctrl.Tag.ToString()].Text);
+                                    fi.SetValue(edited, ((DateTimePicker)assoc[ctrl.Tag.ToString()]).Value.Hour);
                                     break;
                                 default:
-                                    MessageBox.Show(fi.Name + " value hasn't been updated");
+                                    switch (fi.FieldType.ToString())
+                                    {
+                                        case "System.Boolean":
+                                            fi.SetValue(edited, ((CheckBox)assoc[ctrl.Tag.ToString()]).Checked);
+                                            break;
+                                        case "System.Int32":
+                                            fi.SetValue(edited, (int)((NumericUpDown)assoc[ctrl.Tag.ToString()]).Value);
+                                            break;
+                                        case "System.Decimal":
+                                            fi.SetValue(edited, (decimal)((NumericUpDown)assoc[ctrl.Tag.ToString()]).Value);
+                                            break;
+                                        case "System.DateTime":
+                                            fi.SetValue(edited, (DateTime)((DateTimePicker)assoc[ctrl.Tag.ToString()]).Value);
+                                            break;
+                                        case "System.String":
+                                            fi.SetValue(edited, assoc[ctrl.Tag.ToString()].Text);
+                                            break;
+                                        default:
+                                            MessageBox.Show(fi.Name + " value hasn't been updated");
+                                            break;
+                                    }
                                     break;
                             }
                         }
@@ -417,6 +600,7 @@ namespace ManagementSystem
                     e.Cancel = true;
                 }
             });
+            editForm.Height = btnSave.Top + btnSave.Height + 50;
             editForm.ShowDialog();
         }
 
@@ -780,15 +964,56 @@ namespace ManagementSystem
 
         private void btnTodayStats_Click(object sender, EventArgs e)
         {
-            var hour = stat_today_hour.Value.Hour;
+            //TODO: dow may depend on system locale, CHECK!!!!!
+            int dow = (int)DateTime.Now.DayOfWeek;//sun=0,mon=1,sat=6
+            int hour = stat_today_hour.Value.Hour;
             var filtered = (from p in data
                             where (from ab in p.abonements
+                                   //check if this abonement is active (start/end)
+                                   //AND also check if the aboniment includes today, selected hour
+                                   where DateTime.Now >= ab.start
+                                      && DateTime.Now <= ab.end
+                                      && ((dow == 0 && ab.sun && ab.sunHour == hour)
+                                            || (dow == 1 && ab.mon && ab.monHour == hour)
+                                            || (dow == 2 && ab.tue && ab.tueHour == hour)
+                                            || (dow == 3 && ab.wed && ab.wedHour == hour)
+                                            || (dow == 4 && ab.thu && ab.thuHour == hour)
+                                            || (dow == 5 && ab.fri && ab.friHour == hour)
+                                            || (dow == 6 && ab.sat && ab.satHour == hour))
+                                       /*
                                    where (from att in ab.attendance
                                               where att.time == hour
-                                              select att).Count() > 0
+                                              select att).Count() > 0*/
                                    select ab).Count() > 0
                             select p).ToList<Person>();
             displayPersons(filtered);
+        }
+
+        private void btnRemovePerson_Click(object sender, EventArgs e)
+        {
+            if (loginStatus == "administrator")
+            {
+                int idPerson = getSelectedPersonId();
+                if (-1 != idPerson)
+                {
+                    if (DialogResult.Yes == MessageBox.Show("ნამდვილად გსურთ წაშლა?", 
+                        "დადასტურება", MessageBoxButtons.YesNo))
+                    {
+                        int indexPerson = getPersonIndexById(idPerson);
+                        data.RemoveAt(indexPerson);
+                        displayPersons(data);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("პიროვნება არაა მონიშნული!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("თქვენ არ გაქვთ პიროვნების წაშლის უფლება!");
+                return;
+            }
         }
 
 

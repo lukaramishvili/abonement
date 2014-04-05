@@ -17,13 +17,13 @@ namespace ManagementSystem
             get { return day.Hour; }
             set { day.AddHours(value); }
         }
-        public bool attended = false;
+        public int attended = 2;
 
         public Attendance()
         {
         }
 
-        public Attendance(int id, int idPerson, int idAbonement, DateTime day, int time, bool attended)
+        public Attendance(int id, int idPerson, int idAbonement, DateTime day, int time, int attended)
         {
             this.id = id; this.idPerson = idPerson; this.idAbonement = idAbonement;
             this.day = day; day.AddHours(time); this.attended = attended;
