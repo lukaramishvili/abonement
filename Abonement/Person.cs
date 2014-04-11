@@ -14,7 +14,7 @@ namespace ManagementSystem
         public int age = 0;
         public string address = "";
         public string phone = "";
-        public decimal balance = 0.0m;
+        public string balance = "";//0.0m;
         
         public List<Abonement> abonements = new List<Abonement>();
 
@@ -23,7 +23,7 @@ namespace ManagementSystem
         }
 
         public Person(int id, string ident, string name, int age, string address,
-            string phone, decimal balance, List<Abonement> abonements)
+            string phone, string balance, List<Abonement> abonements)
         {
             this.id = id; this.ident = ident; this.name = name; this.age = age;
             this.address = address; this.phone = phone; this.balance = balance;

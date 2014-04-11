@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Collections;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace ManagementSystem
 {
@@ -27,10 +28,10 @@ namespace ManagementSystem
             translation["phone"] = "ტელ. ნომერი";
             translation["age"] = "ასაკი";
             translation["address"] = "მისამართი";
-            translation["balance"] = "გადახდილია";
-            translation["start"] = "პირადი ნომერი";
-            translation["end"] = "პირადი ნომერი";
-            translation["day"] = "პირადი ნომერი";
+            translation["balance"] = "ბალანსი";
+            translation["start"] = "დაწყების თარიღი";
+            translation["end"] = "დასრულების თარიღი";
+            translation["day"] = "დღე";
             translation["mon"] = "ორშ.";
             translation["tue"] = "სამშ.";
             translation["wed"] = "ოთხშ.";
@@ -141,9 +142,13 @@ namespace ManagementSystem
         {
             attendances_lv.Items.Clear();
             abonements_lv.Items.Clear();
-            for (int iab = 0; iab < abonements.Count; iab++)
+            List<Abonement> abonements_ordered = (from Abonement a in abonements
+                                                    orderby a.start
+                                                   select a).Reverse().ToList<Abonement>();
+            //for (int iab = 0; iab < abonements.Count; iab++)
+            foreach(Abonement ab in abonements_ordered)
             {
-                Abonement ab = abonements[iab];
+                //Abonement ab = abonements[iab];
                 abonements_lv.Items.Add(lviForInstance(ab, abonements_lv));
             }
         }
@@ -151,9 +156,13 @@ namespace ManagementSystem
         public void displayAttendances(List<Attendance> attendances)
         {
             attendances_lv.Items.Clear();
-            for (int iatt = 0; iatt < attendances.Count; iatt++)
+            List<Attendance> attendances_ordered = (from Attendance a in attendances
+                                                   orderby a.day
+                                                   select a).ToList<Attendance>();
+            //for (int iatt = 0; iatt < attendances_ordered.Count; iatt++)
+            foreach(Attendance att in attendances_ordered)
             {
-                Attendance att = attendances[iatt];
+                //Attendance att = attendances[iatt];
                 attendances_lv.Items.Add(lviForInstance(att, attendances_lv));
             }
         }
@@ -333,6 +342,19 @@ namespace ManagementSystem
             return new Tuple<int, int, int>(retPersonIndex, retAbonementIndex, retAttendanceIndex);
         }
 
+        private int getLVIIndexForPersonId(int id)
+        {
+            foreach (ListViewItem lvi in persons_lv.Items)
+            {
+                int curVal = Int32.Parse(getColumnValue(lvi, "id"));
+                if (curVal == id)
+                {
+                    return lvi.Index;
+                }
+            }
+            return -1;
+        }
+
         //displays edit form for a class instance. the class should have a parameterless constructor or it won't work
         /* example use:
                 displayEditForm(new Person(), delegate(Object o) {
@@ -378,7 +400,7 @@ namespace ManagementSystem
                         editForm.Controls.Add(numId);
                         break;
                     case "attended":
-                        yInc = 105;
+                        yInc = 135;
                         lblDef.Visible = false;
                         Label lblMissed = new Label(); lblMissed.Text = "არ მოსულა"; lblMissed.ForeColor = Color.Red;
                         RadioButton rbMissed = new RadioButton();
@@ -386,31 +408,43 @@ namespace ManagementSystem
                         RadioButton rbCame = new RadioButton();
                         Label lblAttended = new Label(); lblAttended.Text = "დაესწრო"; lblAttended.ForeColor = Color.Green;
                         RadioButton rbAttended = new RadioButton();
+                        Label lblCancelled = new Label(); lblCancelled.Text = "გაუქმებულია"; lblCancelled.ForeColor = Color.Violet;
+                        RadioButton rbCancelled = new RadioButton();
                         PictureBox pbMissed = new PictureBox(); pbMissed.Image = ManagementSystem.Properties.Resources.X_Red; pbMissed.Width = 25; pbMissed.Height = 25;
                         PictureBox pbCame = new PictureBox(); pbCame.Image = ManagementSystem.Properties.Resources.Check_Yellow; pbCame.Width = 25; pbCame.Height = 25;
                         PictureBox pbAttended = new PictureBox(); pbAttended.Image = ManagementSystem.Properties.Resources.Check_Green; pbAttended.Width = 25; pbAttended.Height = 25;
+                        PictureBox pbCancelled = new PictureBox(); pbCancelled.Image = ManagementSystem.Properties.Resources.Check_Cancelled; pbCancelled.Width = 25; pbCancelled.Height = 25;
                         lblDef.Top = rbMissed.Top = yPos;
                         lblMissed.Top = (rbMissed.Top = yPos) + 5;
                         lblCame.Top = (rbCame.Top = yPos + 30) + 5;
                         lblAttended.Top = (rbAttended.Top = yPos + 60) + 5;
+                        lblCancelled.Top = (rbCancelled.Top = yPos + 90) + 5;
                         rbMissed.Left = xPos + 30;
                         lblMissed.Left = rbMissed.Left + 20;
                         rbCame.Left = xPos + 30;
-                        lblCame.Left = rbMissed.Left + 20;
+                        lblCame.Left = rbCame.Left + 20;
                         rbAttended.Left = xPos + 30;
-                        lblAttended.Left = rbMissed.Left + 20;
+                        lblAttended.Left = rbAttended.Left + 20;
+                        rbCancelled.Left = xPos + 30;
+                        lblCancelled.Left = rbCancelled.Left + 20;
                         pbMissed.Top = yPos;
                         pbCame.Top = yPos + 30;
                         pbAttended.Top = yPos + 60;
+                        pbCancelled.Top = yPos + 90;
                         pbMissed.Left = xPos;//rbMissed.Left + 20;
                         pbCame.Left = xPos;//pbCame.Left + 20;
                         pbAttended.Left = xPos;//pbAttended.Left + 20;
-                        lblMissed.BackColor = rbMissed.BackColor = lblCame.BackColor = rbCame.BackColor = lblAttended.BackColor = rbAttended.BackColor = Color.Transparent;
-                        assoc[fi.Name] = rbMissed;
-                        editForm.Controls.Add(lblDef); editForm.Controls.Add(lblMissed); editForm.Controls.Add(rbMissed); editForm.Controls.Add(lblCame);
-                        editForm.Controls.Add(rbCame); editForm.Controls.Add(lblAttended); editForm.Controls.Add(rbAttended);
-                        editForm.Controls.Add(pbMissed); editForm.Controls.Add(pbCame); editForm.Controls.Add(pbAttended);
-                        rbMissed.Tag = rbCame.Tag = rbAttended.Tag = fi.Name;
+                        pbCancelled.Left = xPos;//pbAttended.Left + 20;
+                        lblMissed.BackColor = rbMissed.BackColor = lblCame.BackColor = rbCame.BackColor = lblAttended.BackColor = rbAttended.BackColor = lblCancelled.BackColor = rbCancelled.BackColor = Color.Transparent;
+                        assoc[fi.Name + "0"] = rbMissed;
+                        assoc[fi.Name + "1"] = rbCame;
+                        assoc[fi.Name + "2"] = rbAttended;
+                        assoc[fi.Name + "3"] = rbMissed;
+                        editForm.Controls.Add(lblDef); editForm.Controls.Add(lblMissed); editForm.Controls.Add(rbMissed); 
+                        editForm.Controls.Add(lblCame); editForm.Controls.Add(rbCame); editForm.Controls.Add(lblAttended); editForm.Controls.Add(rbAttended);
+                        editForm.Controls.Add(lblCancelled); editForm.Controls.Add(rbCancelled);
+                        editForm.Controls.Add(pbMissed); editForm.Controls.Add(pbCame); editForm.Controls.Add(pbAttended); editForm.Controls.Add(pbCancelled);
+                        rbMissed.Tag = rbCame.Tag = rbAttended.Tag = rbCancelled.Tag = fi.Name;
                         switch ((int)fi.GetValue(o))
                         {
                             case 0:
@@ -422,10 +456,19 @@ namespace ManagementSystem
                             case 2:
                                 rbAttended.Checked = true;
                                 break;
+                            case 3:
+                                rbCancelled.Checked = true;
+                                break;
                         }
+                        //enable changing when adding, but not when editing
+                        if (fi.Name == "attended" && ((Attendance)o).id > 0 && loginStatus != "administrator")
+                        {
+                            rbMissed.Enabled = rbCame.Enabled = rbAttended.Enabled = rbCancelled.Enabled = false;
+                        }
+                        //non-administrators can never set cancelled status to true
                         if (fi.Name == "attended" && loginStatus != "administrator")
                         {
-                            rbMissed.Enabled = rbCame.Enabled = rbAttended.Enabled = false;
+                            rbCancelled.Enabled = false;
                         }
                         break;
                     case "sunHour":
@@ -504,6 +547,11 @@ namespace ManagementSystem
                                 lblDef.Top = tbDef.Top = yPos;
                                 tbDef.Left = xPos + lblDef.Width + 10;
                                 assoc[fi.Name] = tbDef;
+                                //only allow moderators to change balance when adding, not when editing
+                                if (fi.Name == "balance" && ((Person)o).id > 0 && loginStatus != "administrator")
+                                {
+                                    tbDef.Enabled = false;
+                                }
                                 editForm.Controls.Add(lblDef);
                                 editForm.Controls.Add(tbDef);
                                 break;
@@ -536,14 +584,18 @@ namespace ManagementSystem
                             switch (fi.Name)
                             {
                                 case "attended":
+                                    if (((RadioButton)assoc["attended0"]).Checked) { fi.SetValue(edited, 0); }
+                                    if (((RadioButton)assoc["attended1"]).Checked) { fi.SetValue(edited, 1); }
+                                    if (((RadioButton)assoc["attended2"]).Checked) { fi.SetValue(edited, 2); }
+                                    if (((RadioButton)assoc["attended3"]).Checked) { fi.SetValue(edited, 3); }
                                     foreach (Control c in editForm.Controls)
                                     {
-                                        if (c.Tag.ToString() == "attended")
+                                        if (c != null && c.Tag != null && c.Tag.ToString() == "attended" && c.GetType() == typeof(RadioButton))
                                         {
                                             RadioButton rbCur = (RadioButton)c;
                                             if (rbCur.Checked)
                                             {
-                                                fi.SetValue(edited, rbCur.Checked);
+                                                //fi.SetValue(edited, rbCur.Checked);
                                                 break;
                                             }
                                         }
@@ -809,7 +861,8 @@ namespace ManagementSystem
         {
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(txtSearch.Text);
             var filtered = (from p in data
-                               where reg.IsMatch(p.name) || reg.IsMatch(p.address) || reg.IsMatch(p.phone)
+                            where reg.IsMatch(p.id.ToString()) || reg.IsMatch(p.ident.ToString()) || reg.IsMatch(p.name) 
+                            || reg.IsMatch(p.address) || reg.IsMatch(p.phone)
                                select p).ToList<Person>();
             displayPersons(filtered);
         }
@@ -852,6 +905,12 @@ namespace ManagementSystem
                 if (p.id == -1) { MessageBox.Show("პიროვნება ვერ დაემატება, მიღწეულია 777 ლიმიტი."); return; }
                 data.Add(p);
                 displayPersons(data);
+                foreach (ListViewItem lvi in persons_lv.Items)
+                {
+                    lvi.Selected = false;
+                }
+                persons_lv.Items[getLVIIndexForPersonId(p.id)].Selected = true;
+                btnAddAbonement.PerformClick();
             });
         }
 
@@ -892,7 +951,8 @@ namespace ManagementSystem
             while (0 < ++nextBakId && File.Exists(backupsDir + "/data" + nextBakId.ToString("D3") + ".bak")) ;
             if (File.Exists(saveFile)) { File.Copy(saveFile, backupsDir + "/data" + nextBakId.ToString("D3") + ".bak"); }
             //serialize "data" variable and save
-            System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            //System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            XmlSerializer formatter = new XmlSerializer(typeof(List<Person>));
             Stream stream = new FileStream(saveFile, FileMode.Create, FileAccess.Write, FileShare.None);
             formatter.Serialize(stream, ManagementSystem.Main.data);
             stream.Close();
@@ -908,7 +968,8 @@ namespace ManagementSystem
             string saveFile = saveDir + "/data.dat";
             if (File.Exists(saveFile))
             {
-                System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                //System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                XmlSerializer formatter = new XmlSerializer(typeof(List<Person>));
                 Stream stream = new FileStream(saveFile, FileMode.Open, FileAccess.Read, FileShare.Read);
                 ManagementSystem.Main.data = (List<Person>)formatter.Deserialize(stream);
                 stream.Close();
@@ -934,7 +995,7 @@ namespace ManagementSystem
                 if (abonements_lv.SelectedIndices.Count > 0)
                 {
                     int idAbonement = getSelectedAbonementId();
-                    int indexAbonement = getPersonIndexById(idPerson);
+                    int indexAbonement = getAbonementIndexById(idAbonement).Item2;
                     Attendance attToEdit = new Attendance();
                     attToEdit.idPerson = idPerson;
                     attToEdit.idAbonement = idAbonement;
@@ -1014,6 +1075,103 @@ namespace ManagementSystem
                 MessageBox.Show("თქვენ არ გაქვთ პიროვნების წაშლის უფლება!");
                 return;
             }
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            DoTextSearch();
+        }
+
+        private void showDayLoad()
+        {
+            int day = (cb_dayload_day.SelectedIndex + 1) % 7;
+            int hour = cb_dayload_hour.Value.Hour;
+            
+            int futureVisitsForAllPersons = 0;
+            foreach (Person p in data)
+            {
+                int futureVisitsForThisWeekdayAndHour = 0;
+                foreach (Abonement ab in p.abonements)
+                {
+                    //check every day until abonement expires for future bookings that matches selected dayofweek and hour
+                    for (DateTime currentDay = DateTime.Now;
+                        ab.start.Date <= currentDay.Date && currentDay.Date <= ab.end.Date; currentDay = currentDay.AddDays(1))
+                    {
+                        int dowOfCurrentDay = (int)currentDay.DayOfWeek;
+                        bool abonementIncludesCurrentDay = false;
+                        int abonementHourForCurrentDay = 0;
+                        switch(day){
+                            case 0: abonementIncludesCurrentDay = ab.sun; abonementHourForCurrentDay = ab.sunHour; break;
+                            case 1: abonementIncludesCurrentDay = ab.mon; abonementHourForCurrentDay = ab.monHour; break;
+                            case 2: abonementIncludesCurrentDay = ab.tue; abonementHourForCurrentDay = ab.tueHour; break;
+                            case 3: abonementIncludesCurrentDay = ab.wed; abonementHourForCurrentDay = ab.wedHour; break;
+                            case 4: abonementIncludesCurrentDay = ab.thu; abonementHourForCurrentDay = ab.thuHour; break;
+                            case 5: abonementIncludesCurrentDay = ab.fri; abonementHourForCurrentDay = ab.friHour; break;
+                            case 6: abonementIncludesCurrentDay = ab.sat; abonementHourForCurrentDay = ab.satHour; break;
+                        }
+                        //check each day, if it's a selected day of week and has weekday/hour combination booked
+                        if (abonementIncludesCurrentDay && dowOfCurrentDay == day && abonementHourForCurrentDay == hour)
+                        {
+                            futureVisitsForThisWeekdayAndHour++;
+                        }
+                    }
+                }
+                futureVisitsForAllPersons += futureVisitsForThisWeekdayAndHour;
+            }
+            resDayLoad.Text = futureVisitsForAllPersons.ToString();
+        }
+
+        private void cb_dayload_day_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            showDayLoad();
+        }
+
+        private void cb_dayload_hour_ValueChanged(object sender, EventArgs e)
+        {
+            showDayLoad();
+        }
+
+        private void showDayStats()
+        {
+            DateTime day = stat_anyday_date.Value.Date;
+            int start = stat_anyday_start.Value.Hour;
+            int end = stat_anyday_end.Value.Hour;
+
+            List<Person> matched = new List<Person>();
+
+            foreach (Person p in data)
+            {
+                bool thisPersonsVisitsOnThatDayBetweenThoseHours = false;
+                foreach (Abonement ab in p.abonements)
+                {
+                    bool abonementIncludesSelectedDay = false;
+                    int abonementHourForCurrentDay = 0;
+                    switch((int)day.DayOfWeek){
+                        case 0: abonementIncludesSelectedDay = ab.sun; abonementHourForCurrentDay = ab.sunHour; break;
+                        case 1: abonementIncludesSelectedDay = ab.mon; abonementHourForCurrentDay = ab.monHour; break;
+                        case 2: abonementIncludesSelectedDay = ab.tue; abonementHourForCurrentDay = ab.tueHour; break;
+                        case 3: abonementIncludesSelectedDay = ab.wed; abonementHourForCurrentDay = ab.wedHour; break;
+                        case 4: abonementIncludesSelectedDay = ab.thu; abonementHourForCurrentDay = ab.thuHour; break;
+                        case 5: abonementIncludesSelectedDay = ab.fri; abonementHourForCurrentDay = ab.friHour; break;
+                        case 6: abonementIncludesSelectedDay = ab.sat; abonementHourForCurrentDay = ab.satHour; break;
+                    }
+                    if (ab.start.Date <= day.Date && day.Date <= ab.end.Date
+                        && start <= abonementHourForCurrentDay && abonementHourForCurrentDay < end)
+                    {
+                        thisPersonsVisitsOnThatDayBetweenThoseHours = true;
+                    }
+                }
+                if (thisPersonsVisitsOnThatDayBetweenThoseHours)
+                {
+                    matched.Add(p);
+                }
+            }
+            displayPersons(matched);
+        }
+
+        private void btnAllTimeStats_Click(object sender, EventArgs e)
+        {
+            showDayStats();
         }
 
 

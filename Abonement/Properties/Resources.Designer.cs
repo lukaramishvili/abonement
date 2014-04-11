@@ -60,6 +60,13 @@ namespace ManagementSystem.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Check_Cancelled {
+            get {
+                object obj = ResourceManager.GetObject("Check_Cancelled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Check_Green {
             get {
                 object obj = ResourceManager.GetObject("Check_Green", resourceCulture);

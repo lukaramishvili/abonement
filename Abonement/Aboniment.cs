@@ -13,7 +13,7 @@ namespace ManagementSystem
         public DateTime start = DateTime.Now;
         public DateTime end = DateTime.Now;
 
-        public decimal price = 0.0m;
+        //public decimal price = 0.0m;
 
         public bool mon = false;
         public int monHour = 0;
