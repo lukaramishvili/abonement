@@ -47,6 +47,14 @@
             this.phone = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.balance = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.resDayLoad = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.cb_dayload_hour = new System.Windows.Forms.DateTimePicker();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cb_dayload_day = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnTodayStats = new System.Windows.Forms.Button();
             this.btnShowAllPersons = new System.Windows.Forms.Button();
@@ -75,25 +83,17 @@
             this.attid = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.attday = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.atttime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.attattended = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuAttendance = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemAttended = new System.Windows.Forms.ToolStripMenuItem();
             this.mainStatus = new System.Windows.Forms.StatusStrip();
             this.labelLoginStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.cb_dayload_day = new System.Windows.Forms.ComboBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.cb_dayload_hour = new System.Windows.Forms.DateTimePicker();
-            this.label10 = new System.Windows.Forms.Label();
-            this.resDayLoad = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
             this.mainToolbar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.main_hsplit)).BeginInit();
             this.main_hsplit.Panel1.SuspendLayout();
             this.main_hsplit.Panel2.SuspendLayout();
             this.main_hsplit.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bottom_vsplit)).BeginInit();
@@ -102,7 +102,6 @@
             this.bottom_vsplit.SuspendLayout();
             this.menuAttendance.SuspendLayout();
             this.mainStatus.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainToolbar
@@ -212,6 +211,7 @@
             this.balance});
             this.persons_lv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.persons_lv.FullRowSelect = true;
+            this.persons_lv.HideSelection = false;
             this.persons_lv.Location = new System.Drawing.Point(0, 100);
             this.persons_lv.MultiSelect = false;
             this.persons_lv.Name = "persons_lv";
@@ -271,6 +271,95 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1006, 100);
             this.panel1.TabIndex = 3;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label12);
+            this.groupBox3.Controls.Add(this.label11);
+            this.groupBox3.Controls.Add(this.resDayLoad);
+            this.groupBox3.Controls.Add(this.label10);
+            this.groupBox3.Controls.Add(this.cb_dayload_hour);
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.cb_dayload_day);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox3.Location = new System.Drawing.Point(361, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(311, 100);
+            this.groupBox3.TabIndex = 4;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "დღეების დატვირთვა";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(107, 56);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(35, 13);
+            this.label12.TabIndex = 16;
+            this.label12.Text = "ბავშვი";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 56);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(57, 13);
+            this.label11.TabIndex = 15;
+            this.label11.Text = "ჩაწერილია";
+            // 
+            // resDayLoad
+            // 
+            this.resDayLoad.Enabled = false;
+            this.resDayLoad.Location = new System.Drawing.Point(67, 54);
+            this.resDayLoad.Name = "resDayLoad";
+            this.resDayLoad.Size = new System.Drawing.Size(34, 20);
+            this.resDayLoad.TabIndex = 14;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(177, 29);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(34, 13);
+            this.label10.TabIndex = 13;
+            this.label10.Text = "საათი";
+            // 
+            // cb_dayload_hour
+            // 
+            this.cb_dayload_hour.CustomFormat = "HH:00 სთ";
+            this.cb_dayload_hour.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.cb_dayload_hour.Location = new System.Drawing.Point(213, 25);
+            this.cb_dayload_hour.Name = "cb_dayload_hour";
+            this.cb_dayload_hour.ShowUpDown = true;
+            this.cb_dayload_hour.Size = new System.Drawing.Size(65, 20);
+            this.cb_dayload_hour.TabIndex = 12;
+            this.cb_dayload_hour.ValueChanged += new System.EventHandler(this.cb_dayload_hour_ValueChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 28);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(26, 13);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "დღე";
+            // 
+            // cb_dayload_day
+            // 
+            this.cb_dayload_day.FormattingEnabled = true;
+            this.cb_dayload_day.Items.AddRange(new object[] {
+            "ორშაბათი",
+            "სამშაბათი",
+            "ოთხშაბათი",
+            "ხუთშაბათი",
+            "პარასკევი",
+            "შაბათი",
+            "კვირა"});
+            this.cb_dayload_day.Location = new System.Drawing.Point(44, 25);
+            this.cb_dayload_day.Name = "cb_dayload_day";
+            this.cb_dayload_day.Size = new System.Drawing.Size(121, 21);
+            this.cb_dayload_day.TabIndex = 0;
+            this.cb_dayload_day.SelectedIndexChanged += new System.EventHandler(this.cb_dayload_day_SelectedIndexChanged);
             // 
             // groupBox2
             // 
@@ -478,6 +567,7 @@
             this.abend});
             this.abonements_lv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.abonements_lv.FullRowSelect = true;
+            this.abonements_lv.HideSelection = false;
             this.abonements_lv.Location = new System.Drawing.Point(0, 25);
             this.abonements_lv.Name = "abonements_lv";
             this.abonements_lv.Size = new System.Drawing.Size(540, 168);
@@ -529,11 +619,11 @@
             this.attendances_lv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.attid,
             this.attday,
-            this.atttime,
-            this.attattended});
+            this.atttime});
             this.attendances_lv.ContextMenuStrip = this.menuAttendance;
             this.attendances_lv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.attendances_lv.FullRowSelect = true;
+            this.attendances_lv.HideSelection = false;
             this.attendances_lv.Location = new System.Drawing.Point(0, 25);
             this.attendances_lv.Name = "attendances_lv";
             this.attendances_lv.Size = new System.Drawing.Size(462, 168);
@@ -552,16 +642,12 @@
             // 
             this.attday.Tag = "day";
             this.attday.Text = "თარიღი";
+            this.attday.Width = 140;
             // 
             // atttime
             // 
             this.atttime.Tag = "time";
             this.atttime.Text = "დრო";
-            // 
-            // attattended
-            // 
-            this.attattended.Tag = "attended";
-            this.attattended.Text = "დაესწრო";
             // 
             // menuAttendance
             // 
@@ -592,95 +678,6 @@
             this.labelLoginStatus.Name = "labelLoginStatus";
             this.labelLoginStatus.Size = new System.Drawing.Size(0, 17);
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label12);
-            this.groupBox3.Controls.Add(this.label11);
-            this.groupBox3.Controls.Add(this.resDayLoad);
-            this.groupBox3.Controls.Add(this.label10);
-            this.groupBox3.Controls.Add(this.cb_dayload_hour);
-            this.groupBox3.Controls.Add(this.label9);
-            this.groupBox3.Controls.Add(this.cb_dayload_day);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(361, 0);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(311, 100);
-            this.groupBox3.TabIndex = 4;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "დღეების დატვირთვა";
-            // 
-            // cb_dayload_day
-            // 
-            this.cb_dayload_day.FormattingEnabled = true;
-            this.cb_dayload_day.Items.AddRange(new object[] {
-            "ორშაბათი",
-            "სამშაბათი",
-            "ოთხშაბათი",
-            "ხუთშაბათი",
-            "პარასკევი",
-            "შაბათი",
-            "კვირა"});
-            this.cb_dayload_day.Location = new System.Drawing.Point(44, 25);
-            this.cb_dayload_day.Name = "cb_dayload_day";
-            this.cb_dayload_day.Size = new System.Drawing.Size(121, 21);
-            this.cb_dayload_day.TabIndex = 0;
-            this.cb_dayload_day.SelectedIndexChanged += new System.EventHandler(this.cb_dayload_day_SelectedIndexChanged);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 28);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(26, 13);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "დღე";
-            // 
-            // cb_dayload_hour
-            // 
-            this.cb_dayload_hour.CustomFormat = "HH:00 სთ";
-            this.cb_dayload_hour.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.cb_dayload_hour.Location = new System.Drawing.Point(213, 25);
-            this.cb_dayload_hour.Name = "cb_dayload_hour";
-            this.cb_dayload_hour.ShowUpDown = true;
-            this.cb_dayload_hour.Size = new System.Drawing.Size(65, 20);
-            this.cb_dayload_hour.TabIndex = 12;
-            this.cb_dayload_hour.ValueChanged += new System.EventHandler(this.cb_dayload_hour_ValueChanged);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(177, 29);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(34, 13);
-            this.label10.TabIndex = 13;
-            this.label10.Text = "საათი";
-            // 
-            // resDayLoad
-            // 
-            this.resDayLoad.Enabled = false;
-            this.resDayLoad.Location = new System.Drawing.Point(67, 54);
-            this.resDayLoad.Name = "resDayLoad";
-            this.resDayLoad.Size = new System.Drawing.Size(34, 20);
-            this.resDayLoad.TabIndex = 14;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 56);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(57, 13);
-            this.label11.TabIndex = 15;
-            this.label11.Text = "ჩაწერილია";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(107, 56);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(35, 13);
-            this.label12.TabIndex = 16;
-            this.label12.Text = "ბავშვი";
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -701,6 +698,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.main_hsplit)).EndInit();
             this.main_hsplit.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -714,8 +713,6 @@
             this.menuAttendance.ResumeLayout(false);
             this.mainStatus.ResumeLayout(false);
             this.mainStatus.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -741,7 +738,6 @@
         private System.Windows.Forms.StatusStrip mainStatus;
         private System.Windows.Forms.ToolStripStatusLabel labelLoginStatus;
         private System.Windows.Forms.ToolStripTextBox txtSearch;
-        private System.Windows.Forms.ColumnHeader attattended;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;

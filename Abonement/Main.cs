@@ -60,8 +60,9 @@ namespace ManagementSystem
             return translation.ContainsKey(what) ? translation[what].ToString() : what;
         }
 
-        public static ListViewItem lviForInstance(Object o, ListView lv)
+        public static ListViewItem lviForInstance(Object o, ListView lv, int iter = 0)
         {
+            ListViewItem lvi = new ListViewItem();
             List<string> items = new List<string>();
             foreach (ColumnHeader ch in lv.Columns)
             {
@@ -69,10 +70,63 @@ namespace ManagementSystem
                 System.Reflection.FieldInfo fi = o.GetType().GetField(ch.Tag.ToString());
                 if (fi != null)
                 {
-                    items.Add(fi.GetValue(o).ToString());
+                    if (fi.Name == "id")
+                    {
+                        if (o.GetType() == typeof(Person))
+                        {
+                            items.Add(fi.GetValue(o).ToString());
+                        }
+                        else
+                        {
+                            items.Add(iter.ToString());
+                        }
+                        lvi.Tag = fi.GetValue(o).ToString();
+                    }
+                    else
+                    {
+                        items.Add(fi.GetValue(o).ToString());
+                    }
                 }
             }
-            ListViewItem lvi = new ListViewItem(items.ToArray());
+            lvi.SubItems.AddRange(items.ToArray());
+            lvi.SubItems.RemoveAt(0);
+            return lvi;
+        }
+
+        public static ListViewItem lviForAttendance(Object o, ListView lv, int iter = 0)
+        {
+            ListViewItem lvi = new ListViewItem();
+            ImageList imgs = new ImageList();
+            imgs.Images.Add(ManagementSystem.Properties.Resources.X_Red);
+            imgs.Images.Add(ManagementSystem.Properties.Resources.Check_Yellow);
+            imgs.Images.Add(ManagementSystem.Properties.Resources.Check_Green);
+            imgs.Images.Add(ManagementSystem.Properties.Resources.Check_Cancelled);
+            lv.SmallImageList = imgs;
+            List<string> items = new List<string>();
+            foreach (ColumnHeader ch in lv.Columns)
+            {
+                if (ch.Tag != null)
+                {
+                    /*ch.Name doesn't work (a bug), so Tag is used for column name*/
+                    System.Reflection.FieldInfo fi = o.GetType().GetField(ch.Tag.ToString());
+                    if (fi != null)
+                    {
+                        if (fi.Name == "id")
+                        {
+                            items.Add(iter.ToString());
+                            lvi.Tag = fi.GetValue(o).ToString();
+                        }
+                        else
+                        {
+                            items.Add(fi.GetValue(o).ToString());
+                        }
+                    }
+                }
+            }
+            items.Add(((Attendance)o).time.ToString()+":00");
+            lvi.SubItems.AddRange(items.ToArray());
+            lvi.SubItems.RemoveAt(0);
+            lvi.ImageIndex = ((Attendance)o).attended;//0:missed,1:came,2:attended,3:cancelled
             return lvi;
         }
         /*
@@ -146,10 +200,12 @@ namespace ManagementSystem
                                                     orderby a.start
                                                    select a).Reverse().ToList<Abonement>();
             //for (int iab = 0; iab < abonements.Count; iab++)
+            int iter = 1;
             foreach(Abonement ab in abonements_ordered)
             {
                 //Abonement ab = abonements[iab];
-                abonements_lv.Items.Add(lviForInstance(ab, abonements_lv));
+                abonements_lv.Items.Add(lviForInstance(ab, abonements_lv, iter));
+                iter++;
             }
         }
 
@@ -160,10 +216,12 @@ namespace ManagementSystem
                                                    orderby a.day
                                                    select a).ToList<Attendance>();
             //for (int iatt = 0; iatt < attendances_ordered.Count; iatt++)
+            int iter = 1;
             foreach(Attendance att in attendances_ordered)
             {
                 //Attendance att = attendances[iatt];
-                attendances_lv.Items.Add(lviForInstance(att, attendances_lv));
+                attendances_lv.Items.Add(lviForAttendance(att, attendances_lv, iter));
+                iter++;
             }
         }
 
@@ -172,7 +230,8 @@ namespace ManagementSystem
             int ret = -1;
             if (persons_lv.SelectedItems.Count > 0)
             {
-                ret = Int32.Parse(getColumnValue(persons_lv.SelectedItems[0], "id"));
+                //ret = Int32.Parse(getColumnValue(persons_lv.SelectedItems[0], "id"));
+                ret = Int32.Parse(persons_lv.SelectedItems[0].Tag.ToString());
             }
             return ret;
         }
@@ -182,7 +241,8 @@ namespace ManagementSystem
             int ret = -1;
             if (abonements_lv.SelectedItems.Count > 0)
             {
-                ret = Int32.Parse(getColumnValue(abonements_lv.SelectedItems[0], "id"));
+                //ret = Int32.Parse(getColumnValue(abonements_lv.SelectedItems[0], "id"));
+                ret = Int32.Parse(abonements_lv.SelectedItems[0].Tag.ToString());
             }
             return ret;
         }
@@ -192,7 +252,8 @@ namespace ManagementSystem
             int ret = -1;
             if (attendances_lv.SelectedItems.Count > 0)
             {
-                ret = Int32.Parse(getColumnValue(attendances_lv.SelectedItems[0], "id"));
+                //ret = Int32.Parse(getColumnValue(attendances_lv.SelectedItems[0], "id"));
+                ret = Int32.Parse(attendances_lv.SelectedItems[0].Tag.ToString());
             }
             return ret;
         }
@@ -439,7 +500,7 @@ namespace ManagementSystem
                         assoc[fi.Name + "0"] = rbMissed;
                         assoc[fi.Name + "1"] = rbCame;
                         assoc[fi.Name + "2"] = rbAttended;
-                        assoc[fi.Name + "3"] = rbMissed;
+                        assoc[fi.Name + "3"] = rbCancelled;
                         editForm.Controls.Add(lblDef); editForm.Controls.Add(lblMissed); editForm.Controls.Add(rbMissed); 
                         editForm.Controls.Add(lblCame); editForm.Controls.Add(rbCame); editForm.Controls.Add(lblAttended); editForm.Controls.Add(rbAttended);
                         editForm.Controls.Add(lblCancelled); editForm.Controls.Add(rbCancelled);
@@ -659,6 +720,12 @@ namespace ManagementSystem
         public static List<Person> data = new List<Person>();
         public string loginStatus = "none";
 
+        private Tuple<string, string>[] admins = { new Tuple<string, string>("javascript", "javascript"),
+                                                     new Tuple<string, string>("ჩხიტუნიძემალხაზი", "დირექტორი2014") };
+        private Tuple<string, string>[] moders = { new Tuple<string, string>("javascriptmoderator", "javascriptmoderator"),
+                                                     new Tuple<string, string>("თექთუმანიძემარინა", "მარინა15"),
+                                                     new Tuple<string, string>("კირვალიძემანანა", "მანანა3434") };
+
         private void Main_Load(object sender, EventArgs e)
         {
             Form frmLogin = new Form(); frmLogin.Text = "შესვლა";
@@ -672,8 +739,16 @@ namespace ManagementSystem
             bool fClickedDontTryAgain = false;//otherwise, FormClosing gets called twice
             btnLogin.Click += new EventHandler(delegate
             {
-                if (txtUsername.Text == "admin" && txtPassword.Text == "123") { loginStatus = "administrator"; }
-                else if (txtUsername.Text == "moderator" && txtPassword.Text == "123") { loginStatus = "moderator"; }
+                /*txtUsername.Text == "admin" && txtPassword.Text == "123"*/
+                if (admins.Contains(new Tuple<string, string>(txtUsername.Text, txtPassword.Text)))
+                {
+                    loginStatus = "administrator";
+                }
+                //(txtUsername.Text == "moderator" && txtPassword.Text == "123")
+                else if (moders.Contains(new Tuple<string, string>(txtUsername.Text, txtPassword.Text)))
+                {
+                    loginStatus = "moderator";
+                }
                 else { MessageBox.Show("მომხმარებლის სახელი ან პაროლი არასწორია"); }
                 if (loginStatus != "none") {
                     labelLoginStatus.Text = "თქვენ შემოსული ხართ, როგორც " + loginStatus;
@@ -744,6 +819,11 @@ namespace ManagementSystem
                 if (p.abonements != null)
                 {
                     displayAbonements(p.abonements);
+                    if (abonements_lv.Items.Count > 0)
+                    {
+                        foreach (ListViewItem lvi in abonements_lv.Items) { lvi.Selected = false; }
+                        abonements_lv.Items[0].Selected = true;
+                    }
                 }
             }
             else { displayAbonements(new List<Abonement>()); }
