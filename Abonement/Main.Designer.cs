@@ -40,7 +40,6 @@
             this.main_hsplit = new System.Windows.Forms.SplitContainer();
             this.persons_lv = new System.Windows.Forms.ListView();
             this.id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ident = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.age = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.address = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -57,6 +56,9 @@
             this.label9 = new System.Windows.Forms.Label();
             this.cb_dayload_day = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.txtTodayCount = new System.Windows.Forms.TextBox();
             this.btnTodayStats = new System.Windows.Forms.Button();
             this.btnShowAllPersons = new System.Windows.Forms.Button();
             this.btnClearSearch = new System.Windows.Forms.Button();
@@ -88,9 +90,6 @@
             this.menuItemAttended = new System.Windows.Forms.ToolStripMenuItem();
             this.mainStatus = new System.Windows.Forms.StatusStrip();
             this.labelLoginStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.txtTodayCount = new System.Windows.Forms.TextBox();
             this.mainToolbar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.main_hsplit)).BeginInit();
             this.main_hsplit.Panel1.SuspendLayout();
@@ -207,7 +206,6 @@
             // 
             this.persons_lv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.id,
-            this.ident,
             this.name,
             this.age,
             this.address,
@@ -231,12 +229,6 @@
             this.id.Tag = "id";
             this.id.Text = "ID";
             this.id.Width = 37;
-            // 
-            // ident
-            // 
-            this.ident.Tag = "ident";
-            this.ident.Text = "პირადი ნომერი";
-            this.ident.Width = 85;
             // 
             // name
             // 
@@ -393,6 +385,32 @@
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "დღის სტატისტიკა";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(294, 47);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(35, 13);
+            this.label13.TabIndex = 19;
+            this.label13.Text = "ბავშვი";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(144, 47);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(87, 13);
+            this.label14.TabIndex = 18;
+            this.label14.Text = "დაესწრო/მოვიდა";
+            // 
+            // txtTodayCount
+            // 
+            this.txtTodayCount.Enabled = false;
+            this.txtTodayCount.Location = new System.Drawing.Point(238, 45);
+            this.txtTodayCount.Name = "txtTodayCount";
+            this.txtTodayCount.Size = new System.Drawing.Size(52, 20);
+            this.txtTodayCount.TabIndex = 17;
             // 
             // btnTodayStats
             // 
@@ -695,32 +713,6 @@
             this.labelLoginStatus.Name = "labelLoginStatus";
             this.labelLoginStatus.Size = new System.Drawing.Size(0, 17);
             // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(294, 47);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(35, 13);
-            this.label13.TabIndex = 19;
-            this.label13.Text = "ბავშვი";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(144, 47);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(87, 13);
-            this.label14.TabIndex = 18;
-            this.label14.Text = "დაესწრო/მოვიდა";
-            // 
-            // txtTodayCount
-            // 
-            this.txtTodayCount.Enabled = false;
-            this.txtTodayCount.Location = new System.Drawing.Point(238, 45);
-            this.txtTodayCount.Name = "txtTodayCount";
-            this.txtTodayCount.Size = new System.Drawing.Size(52, 20);
-            this.txtTodayCount.TabIndex = 17;
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -803,7 +795,6 @@
         private System.Windows.Forms.ToolStripButton btnSaveAllData;
         private System.Windows.Forms.ListView persons_lv;
         private System.Windows.Forms.ColumnHeader id;
-        private System.Windows.Forms.ColumnHeader ident;
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ColumnHeader age;
         private System.Windows.Forms.ColumnHeader address;

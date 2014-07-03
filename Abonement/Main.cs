@@ -116,6 +116,11 @@ namespace ManagementSystem
                             items.Add(iter.ToString());
                             lvi.Tag = fi.GetValue(o).ToString();
                         }
+                        else if(fi.Name == "day")
+                        {
+                            DateTime day = (DateTime)fi.GetValue(o);
+                            items.Add(day.ToString("dd/MM/yyyy"));
+                        }
                         else
                         {
                             items.Add(fi.GetValue(o).ToString());
