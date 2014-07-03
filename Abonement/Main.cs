@@ -532,8 +532,8 @@ namespace ManagementSystem
                                 rbCancelled.Checked = true;//გაუქმებულია
                                 break;
                         }
-                        //enable changing when adding, but not when editing
-                        if (fi.Name == "attended" && ((Attendance)o).id > 0 && loginStatus != "administrator")
+                        //enable changing when adding, but not when editing (except when editing a "gafrtxilebulia" status)
+                        if (fi.Name == "attended" && ((Attendance)o).id > 0 && loginStatus != "administrator" && ((Attendance)o).attended != 0)
                         {
                             rbMissed.Enabled = rbCame.Enabled = rbAttended.Enabled = rbCancelled.Enabled = false;
                         }
