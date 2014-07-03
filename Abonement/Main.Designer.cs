@@ -48,6 +48,7 @@
             this.balance = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnDayLoad = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.resDayLoad = new System.Windows.Forms.TextBox();
@@ -87,6 +88,9 @@
             this.menuItemAttended = new System.Windows.Forms.ToolStripMenuItem();
             this.mainStatus = new System.Windows.Forms.StatusStrip();
             this.labelLoginStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.txtTodayCount = new System.Windows.Forms.TextBox();
             this.mainToolbar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.main_hsplit)).BeginInit();
             this.main_hsplit.Panel1.SuspendLayout();
@@ -274,6 +278,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.btnDayLoad);
             this.groupBox3.Controls.Add(this.label12);
             this.groupBox3.Controls.Add(this.label11);
             this.groupBox3.Controls.Add(this.resDayLoad);
@@ -289,10 +294,20 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "დღეების დატვირთვა";
             // 
+            // btnDayLoad
+            // 
+            this.btnDayLoad.Location = new System.Drawing.Point(6, 52);
+            this.btnDayLoad.Name = "btnDayLoad";
+            this.btnDayLoad.Size = new System.Drawing.Size(53, 23);
+            this.btnDayLoad.TabIndex = 8;
+            this.btnDayLoad.Text = "ძიება";
+            this.btnDayLoad.UseVisualStyleBackColor = true;
+            this.btnDayLoad.Click += new System.EventHandler(this.btnDayLoad_Click);
+            // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(107, 56);
+            this.label12.Location = new System.Drawing.Point(196, 56);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(35, 13);
             this.label12.TabIndex = 16;
@@ -301,7 +316,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 56);
+            this.label11.Location = new System.Drawing.Point(65, 56);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(57, 13);
             this.label11.TabIndex = 15;
@@ -310,9 +325,9 @@
             // resDayLoad
             // 
             this.resDayLoad.Enabled = false;
-            this.resDayLoad.Location = new System.Drawing.Point(67, 54);
+            this.resDayLoad.Location = new System.Drawing.Point(134, 54);
             this.resDayLoad.Name = "resDayLoad";
-            this.resDayLoad.Size = new System.Drawing.Size(34, 20);
+            this.resDayLoad.Size = new System.Drawing.Size(52, 20);
             this.resDayLoad.TabIndex = 14;
             // 
             // label10
@@ -353,8 +368,7 @@
             "ოთხშაბათი",
             "ხუთშაბათი",
             "პარასკევი",
-            "შაბათი",
-            "კვირა"});
+            "შაბათი"});
             this.cb_dayload_day.Location = new System.Drawing.Point(44, 25);
             this.cb_dayload_day.Name = "cb_dayload_day";
             this.cb_dayload_day.Size = new System.Drawing.Size(121, 21);
@@ -363,6 +377,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label13);
+            this.groupBox2.Controls.Add(this.label14);
+            this.groupBox2.Controls.Add(this.txtTodayCount);
             this.groupBox2.Controls.Add(this.btnTodayStats);
             this.groupBox2.Controls.Add(this.btnShowAllPersons);
             this.groupBox2.Controls.Add(this.btnClearSearch);
@@ -433,9 +450,9 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(6, 22);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(157, 13);
+            this.label8.Size = new System.Drawing.Size(160, 13);
             this.label8.TabIndex = 6;
-            this.label8.Text = "რამდენი ბავშვია ჩაწერილი დღეს";
+            this.label8.Text = "რამდენი ბავშვი დაესწრო/მოვიდა";
             // 
             // groupBox1
             // 
@@ -678,6 +695,32 @@
             this.labelLoginStatus.Name = "labelLoginStatus";
             this.labelLoginStatus.Size = new System.Drawing.Size(0, 17);
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(294, 47);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(35, 13);
+            this.label13.TabIndex = 19;
+            this.label13.Text = "ბავშვი";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(144, 47);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(87, 13);
+            this.label14.TabIndex = 18;
+            this.label14.Text = "დაესწრო/მოვიდა";
+            // 
+            // txtTodayCount
+            // 
+            this.txtTodayCount.Enabled = false;
+            this.txtTodayCount.Location = new System.Drawing.Point(238, 45);
+            this.txtTodayCount.Name = "txtTodayCount";
+            this.txtTodayCount.Size = new System.Drawing.Size(52, 20);
+            this.txtTodayCount.TabIndex = 17;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -777,6 +820,10 @@
         private System.Windows.Forms.DateTimePicker cb_dayload_hour;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cb_dayload_day;
+        private System.Windows.Forms.Button btnDayLoad;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox txtTodayCount;
 
     }
 }

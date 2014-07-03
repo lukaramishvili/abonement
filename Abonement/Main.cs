@@ -444,6 +444,12 @@ namespace ManagementSystem
                 //first, decide which editor to use based on the field name
                 switch (fi.Name)
                 {
+                    case "ident":
+                    case "sun":
+                    //if we ever enable sunHour again, then uncomment sunHour case below near other days
+                    case "sunHour":
+                        yInc = 0;
+                        break;
                     case "id":
                     case "idPerson":
                     case "idAbonement":
@@ -463,23 +469,23 @@ namespace ManagementSystem
                     case "attended":
                         yInc = 135;
                         lblDef.Visible = false;
-                        Label lblMissed = new Label(); lblMissed.Text = "არ მოსულა"; lblMissed.ForeColor = Color.Red;
-                        RadioButton rbMissed = new RadioButton();
-                        Label lblCame = new Label(); lblCame.Text = "მოვიდა"; lblCame.ForeColor = Color.Yellow;
+                        Label lblCame = new Label(); lblCame.Text = "მოვიდა"; lblCame.ForeColor = Color.Green;
                         RadioButton rbCame = new RadioButton();
                         Label lblAttended = new Label(); lblAttended.Text = "დაესწრო"; lblAttended.ForeColor = Color.Green;
                         RadioButton rbAttended = new RadioButton();
-                        Label lblCancelled = new Label(); lblCancelled.Text = "გაუქმებულია"; lblCancelled.ForeColor = Color.Violet;
+                        Label lblCancelled = new Label(); lblCancelled.Text = "გაუქმებულია"; lblCancelled.ForeColor = Color.Red;
                         RadioButton rbCancelled = new RadioButton();
+                        Label lblMissed = new Label(); lblMissed.Text = "გააფრთხილა"; lblMissed.ForeColor = Color.Green;
+                        RadioButton rbMissed = new RadioButton();
                         PictureBox pbMissed = new PictureBox(); pbMissed.Image = ManagementSystem.Properties.Resources.X_Red; pbMissed.Width = 25; pbMissed.Height = 25;
                         PictureBox pbCame = new PictureBox(); pbCame.Image = ManagementSystem.Properties.Resources.Check_Yellow; pbCame.Width = 25; pbCame.Height = 25;
                         PictureBox pbAttended = new PictureBox(); pbAttended.Image = ManagementSystem.Properties.Resources.Check_Green; pbAttended.Width = 25; pbAttended.Height = 25;
                         PictureBox pbCancelled = new PictureBox(); pbCancelled.Image = ManagementSystem.Properties.Resources.Check_Cancelled; pbCancelled.Width = 25; pbCancelled.Height = 25;
                         lblDef.Top = rbMissed.Top = yPos;
-                        lblMissed.Top = (rbMissed.Top = yPos) + 5;
-                        lblCame.Top = (rbCame.Top = yPos + 30) + 5;
-                        lblAttended.Top = (rbAttended.Top = yPos + 60) + 5;
-                        lblCancelled.Top = (rbCancelled.Top = yPos + 90) + 5;
+                        lblCame.Top = (rbCame.Top = yPos) + 5;
+                        lblAttended.Top = (rbAttended.Top = yPos + 30) + 5;
+                        lblCancelled.Top = (rbCancelled.Top = yPos +60) + 5;
+                        lblMissed.Top = (rbMissed.Top = yPos + 90) + 5;
                         rbMissed.Left = xPos + 30;
                         lblMissed.Left = rbMissed.Left + 20;
                         rbCame.Left = xPos + 30;
@@ -488,10 +494,10 @@ namespace ManagementSystem
                         lblAttended.Left = rbAttended.Left + 20;
                         rbCancelled.Left = xPos + 30;
                         lblCancelled.Left = rbCancelled.Left + 20;
-                        pbMissed.Top = yPos;
-                        pbCame.Top = yPos + 30;
-                        pbAttended.Top = yPos + 60;
-                        pbCancelled.Top = yPos + 90;
+                        pbCame.Top = yPos;
+                        pbAttended.Top = yPos + 30;
+                        pbCancelled.Top = yPos + 60;
+                        pbMissed.Top = yPos + 90;
                         pbMissed.Left = xPos;//rbMissed.Left + 20;
                         pbCame.Left = xPos;//pbCame.Left + 20;
                         pbAttended.Left = xPos;//pbAttended.Left + 20;
@@ -509,16 +515,16 @@ namespace ManagementSystem
                         switch ((int)fi.GetValue(o))
                         {
                             case 0:
-                                rbMissed.Checked = true;
+                                rbMissed.Checked = true;//გააფრთხილა
                                 break;
                             case 1:
-                                rbCame.Checked = true;
+                                rbCame.Checked = true;//მოვიდა
                                 break;
                             case 2:
-                                rbAttended.Checked = true;
+                                rbAttended.Checked = true;//დაესწრო
                                 break;
                             case 3:
-                                rbCancelled.Checked = true;
+                                rbCancelled.Checked = true;//გაუქმებულია
                                 break;
                         }
                         //enable changing when adding, but not when editing
@@ -532,7 +538,7 @@ namespace ManagementSystem
                             rbCancelled.Enabled = false;
                         }
                         break;
-                    case "sunHour":
+                    /*case "sunHour":*/
                     case "monHour":
                     case "tueHour":
                     case "wedHour":
@@ -595,6 +601,11 @@ namespace ManagementSystem
                                 break;
                             case "System.DateTime":
                                 DateTimePicker dateEd = new DateTimePicker();
+                                dateEd.Format = DateTimePickerFormat.Custom;
+                                if (typeof(Attendance) == o.GetType())
+                                {
+                                    dateEd.CustomFormat = "dd/MM/yyyy, საათი: HH:00";
+                                }
                                 dateEd.Value = (DateTime)fi.GetValue(o);
                                 lblDef.Top = dateEd.Top = yPos;
                                 dateEd.Left = xPos + lblDef.Width + 10;
@@ -941,8 +952,8 @@ namespace ManagementSystem
         {
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(txtSearch.Text);
             var filtered = (from p in data
-                            where reg.IsMatch(p.id.ToString()) || reg.IsMatch(p.ident.ToString()) || reg.IsMatch(p.name) 
-                            || reg.IsMatch(p.address) || reg.IsMatch(p.phone)
+                            where reg.IsMatch(p.id.ToString()) || reg.IsMatch(p.name) 
+                            /*|| reg.IsMatch(p.ident.ToString()) || reg.IsMatch(p.address) || reg.IsMatch(p.phone)*/
                                select p).ToList<Person>();
             displayPersons(filtered);
         }
@@ -1106,6 +1117,28 @@ namespace ManagementSystem
         private void btnTodayStats_Click(object sender, EventArgs e)
         {
             //TODO: dow may depend on system locale, CHECK!!!!!
+            int hour = stat_today_hour.Value.Hour;
+            var filtered = (from p in data
+                            where (from ab in p.abonements
+                                   //check if this abonement is active (start/end)
+                                   //AND also check if the aboniment includes today, selected hour
+                                   where (from att in ab.attendance
+                                              where att.day.Date == DateTime.Now.Date && att.day.Hour == hour
+                                                    && (att.attended == 1 || att.attended == 2)
+                                              select att).Count() > 0
+                                       /*
+                                   where (from att in ab.attendance
+                                              where att.time == hour
+                                              select att).Count() > 0*/
+                                   select ab).Count() > 0
+                            select p).ToList<Person>();
+            displayPersons(filtered);
+            txtTodayCount.Text = filtered.Count.ToString();
+        }
+
+        private void btnTodayStats_Click_OLD(object sender, EventArgs e)
+        {
+            //TODO: dow may depend on system locale, CHECK!!!!!
             int dow = (int)DateTime.Now.DayOfWeek;//sun=0,mon=1,sat=6
             int hour = stat_today_hour.Value.Hour;
             var filtered = (from p in data
@@ -1121,10 +1154,10 @@ namespace ManagementSystem
                                             || (dow == 4 && ab.thu && ab.thuHour == hour)
                                             || (dow == 5 && ab.fri && ab.friHour == hour)
                                             || (dow == 6 && ab.sat && ab.satHour == hour))
-                                       /*
-                                   where (from att in ab.attendance
-                                              where att.time == hour
-                                              select att).Count() > 0*/
+                                   /*
+                               where (from att in ab.attendance
+                                          where att.time == hour
+                                          select att).Count() > 0*/
                                    select ab).Count() > 0
                             select p).ToList<Person>();
             displayPersons(filtered);
@@ -1170,13 +1203,15 @@ namespace ManagementSystem
             int futureVisitsForAllPersons = 0;
             foreach (Person p in data)
             {
+                bool fSkipToNextPerson = false;
                 int futureVisitsForThisWeekdayAndHour = 0;
                 foreach (Abonement ab in p.abonements)
                 {
                     //check every day until abonement expires for future bookings that matches selected dayofweek and hour
                     for (DateTime currentDay = DateTime.Now;
-                        ab.start.Date <= currentDay.Date && currentDay.Date <= ab.end.Date; currentDay = currentDay.AddDays(1))
+                        currentDay.Date <= ab.end.Date; currentDay = currentDay.AddDays(1))
                     {
+                        if (ab.start.Date > currentDay.Date) { continue; }
                         int dowOfCurrentDay = (int)currentDay.DayOfWeek;
                         bool abonementIncludesCurrentDay = false;
                         int abonementHourForCurrentDay = 0;
@@ -1193,8 +1228,11 @@ namespace ManagementSystem
                         if (abonementIncludesCurrentDay && dowOfCurrentDay == day && abonementHourForCurrentDay == hour)
                         {
                             futureVisitsForThisWeekdayAndHour++;
+                            fSkipToNextPerson = true;
+                            break;
                         }
                     }
+                    if (fSkipToNextPerson) { break; }
                 }
                 futureVisitsForAllPersons += futureVisitsForThisWeekdayAndHour;
             }
@@ -1252,6 +1290,11 @@ namespace ManagementSystem
         private void btnAllTimeStats_Click(object sender, EventArgs e)
         {
             showDayStats();
+        }
+
+        private void btnDayLoad_Click(object sender, EventArgs e)
+        {
+            showDayLoad();
         }
 
 

@@ -11,6 +11,7 @@ namespace ManagementSystem
         public int id = 0;
         public int idPerson = 0;
         public int idAbonement = 0;
+        //hour component of when attendance took place is stored in this variable's Hour variable
         public DateTime day = DateTime.Now;
         public int time
         {
